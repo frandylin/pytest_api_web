@@ -6,9 +6,9 @@ from selenium.webdriver.common.by import By
 
 browser = webdriver.Chrome()
 browser.maximize_window()
-browser.get("https://www.shaberi.com")
-
-appstore = browser.find_element(By.XPATH, '//img[@alt="appstore_url"]')
-appstore.click()
-time.sleep(10)
+browser.get("https://im-stg-web.imdevs.net/#/home")
+time.sleep(5)
+# appstore = browser.find_element(By.XPATH, '//img[@alt="appstore_url"]')
+# appstore.click()
+# time.sleep(10)
 

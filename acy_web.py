@@ -41,7 +41,21 @@ last_name = browser.find_element(By.NAME, 'lastName')
 first_name.send_keys('Frandy')
 last_name.send_keys('Lin')
 
-#phone test ----------
+#phone number test ----------
+flag_dropdown = browser.find_element(By.CLASS_NAME, 'flag-dropdown')
+flag_dropdown.click()
+flag_listbox = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'country-list.dropdown')))
+search_box = browser.find_element(By.CLASS_NAME, 'search-box.search-class-box')
+search_box.send_keys('+41')
+switzerland_option = browser.find_element(By.XPATH, '//*[@id="root"]/main/div/div/div/div[2]/div/form/div/div/div[2]/div/div[3]/div/div[1]/div/div[2]/ul/li[3]')
+switzerland_option.click()
+time.sleep(2)
+flag_dropdown.click()
+flag_listbox = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'country-list.dropdown')))
+search_box = browser.find_element(By.CLASS_NAME, 'search-box.search-class-box')
+search_box.send_keys('+886')
+Taiwan_option = browser.find_element(By.XPATH, '//*[@id="root"]/main/div/div/div/div[2]/div/form/div/div/div[2]/div/div[3]/div/div[1]/div/div[2]/ul/li[2]')
+Taiwan_option.click()
 phone_number = browser.find_element(By.CLASS_NAME, 'form-control.phone-input')
 phone_number.send_keys('909317920')
 
@@ -50,7 +64,7 @@ email_address = browser.find_element(By.NAME, 'email')
 email_address.send_keys('frandyfancy@gmail.com')
 
 #password test----------
-create_password = browser.find_element(By.NAME, 'password')
+create_password = browser.find_element(By.NAME, 'password') 
 create_password.send_keys('K25i04r682a')
 #prsent password
 password_button = browser.find_element(By.CSS_SELECTOR, '[aria-label="Password Icon"]') 
@@ -61,8 +75,7 @@ time.sleep(1)
 chat_button = browser.find_element(By.XPATH, '/html/body/div/div/div')
 chat_button.click()
 time.sleep(2)
-hide_chat_button = browser.find_element(By.XPATH, '/html/body/div/div/div/button')
-hide_chat_button.click()
+
 
 #continue test----------
 # continue_button = browser.find_element(By.CLASS_NAME, 'sc-dkrFOg.eQVywz.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.sc-hLBbgP.jnhPst.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.customButton')
