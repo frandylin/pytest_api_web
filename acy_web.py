@@ -75,10 +75,11 @@ time.sleep(1)
 chat_button = browser.find_element(By.XPATH, '/html/body/div/div/div')
 chat_button.click()
 time.sleep(2)
-
+# hide_chat_button = browser.find_element(By.CLASS_NAME, '/html/body/div/div/div/button')
+# hide_chat_button.click()
 
 #continue test----------
-# continue_button = browser.find_element(By.CLASS_NAME, 'sc-dkrFOg.eQVywz.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.sc-hLBbgP.jnhPst.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.customButton')
-# continue_button.click()
+continue_button = browser.find_element(By.CLASS_NAME, 'sc-dkrFOg.eQVywz.MuiButtonBase-root.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.sc-hLBbgP.jnhPst.MuiButton-root.MuiButton-text.MuiButton-textPrimary.MuiButton-sizeMedium.MuiButton-textSizeMedium.customButton')
+continue_button.click()
 
 time.sleep(5)
