@@ -178,11 +178,13 @@ finally:
 shutil.rmtree(download_directory)
 
 #Twitter test ------
-twitter_bt = browser.find_element(By.CLASS_NAME, 'inline.hover:underline')
+twitter_bt = browser.find_element(By.CLASS_NAME, 'download-link.pr-6')
 actions = ActionChains(browser)
 actions.move_to_element(twitter_bt).perform()
 twitter_bt.click()
 wait.until(lambda browser : len(browser.window_handles) > 1)
 browser.switch_to.window(browser.window_handles[1])
 wait.until(EC.url_to_be("https://twitter.com/i/flow/login?redirect_after_login=%2Ftalktal36600622"))
+browser.close()
+browser.switch_to.window(browser.window_handles[0])
 browser.close()
