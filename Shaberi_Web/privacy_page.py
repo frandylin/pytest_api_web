@@ -37,16 +37,16 @@ def test_privacy_page(browser):
 def test_language_switch(browser):
 
     languages = [
-        ('1', '/cn/privacy'),
-        ('2', '/en/privacy'),
-        ('3', '/jp/privacy'),
-        ('4', '/tw/privacy')
+        ('简体中文', '/cn/privacy'),
+        ('English', '/en/privacy'),
+        ('日本語', '/jp/privacy'),
+        ('繁體中文', '/tw/privacy')
     ]
 
     for lang, expected_url_part in languages:
         language_dropdown = browser.find_element(By.CLASS_NAME, 'flex.cursor-pointer')
         language_dropdown.click()
-        language_option = browser.find_element(By.XPATH, f'//*[@id="__layout"]/div/header/div[1]/div/div/div/ul/li[{lang}]/a')
+        language_option = browser.find_element(By.XPATH, f'//*[@id="__layout"]/div/header/div[1]/div/div/div/ul/li/a[contains(text(), "{lang}")]')
         language_option.click()
         wait = WebDriverWait(browser, 10)
         wait.until(EC.url_contains(expected_url_part))
