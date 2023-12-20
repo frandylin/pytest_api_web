@@ -96,6 +96,7 @@ def test_login():
     assert "syt_" in response_data["access_token"], "Response does not contain 'access_token'" 
     assert "device_id" in response_data, "Response does not contain 'device_id'"
     assert response_data["is_first"] == 1, "Response does not contain 'is_first'"
+    
     #Extract access_token
     global global_token
     global_token = response_data.get("access_token")
