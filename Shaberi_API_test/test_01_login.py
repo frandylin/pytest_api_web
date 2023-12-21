@@ -3,13 +3,25 @@ import pytest
 import uuid
 import random
 import csv
+from setting import urls
+import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import smtplib, ssl
+from datetime import datetime
+import hashlib
+from setting import send_email
+
 
 
 country_code = "TW"
-phone_number = f"09{random.randint(10000000, 99999999)}"
+# phone_number = f"09{random.randint(10000000, 99999999)}"
+phone_number = "0975915790"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
+global_user_id = None
 
 def generate_device_id():
     # 生成 UUID
@@ -22,14 +34,10 @@ def generate_device_id():
 def test_register_msisdn():
 
     # API details
-    url = "https://im-stg.imdevs.net/_matrix/client/r0/register/msisdn/requestCode"
+    url = f"{urls['prod']}/_matrix/client/r0/register/msisdn/requestCode"
     headers = {"Content-Type": "application/json"}
 
     # Request data
-    # country_code = "TW"
-    # phone_number = f"09{random.randint(10000000, 99999999)}"
-    # secret = str(uuid.uuid4())  # Replace with your actual client secret
-
     data = {
         "country": country_code,
         "phone_number": phone_number,
@@ -38,6 +46,8 @@ def test_register_msisdn():
         "msisdn_use": "login"
     }
 
+    print("url:" , url)
+    print("header:" , headers)
     print("POST Data:" , data)
 
     # Make the POST request
@@ -57,26 +67,24 @@ def test_register_msisdn():
     global global_sid
     global_sid = response_data.get("sid")
 
-# def extract_sid(response_data):
-#     global global_sid
-#     global_sid = response_data.get("sid")
 
-def write_global_token_to_csv():
+def write_to_csv():
     # 检查 global_token 是否存在
-    if global_token is not None:
+    if global_token is not None and global_user_id is not None:
         with open("token.csv", "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["token", global_token])
+            writer.writerow(["user_id", global_user_id])
     else:
-        print("global_token is None. Skipping writing to CSV.")
-
+        print("Skipping writing to CSV.")
 
 @pytest.mark.run(order=2)
 def test_login():
     # API details
-    url = "https://im-stg.imdevs.net/_matrix/client/r0/login/msisdnlogin"
+    url = f"{urls['prod']}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "xuan@twim.cc"]
 
     data = {
         "session_id": global_sid,
@@ -85,24 +93,47 @@ def test_login():
         "device_id": f"{device_id}",
         "initial_device_display_name": "IOS"
     }
-
+    print("url:" , url)
+    print("header:" , headers)
     print("POST Data:" , data)
-    response = requests.post(url, json=data, headers=headers)
-    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    start_time = time.time()
+    for i in range(2):
+        response = requests.post(url, json=data, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+
+    if diff_time < 5:
+        print("Loading test passed. ")
+    else:
+        send_email("", "login test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+
+    if response.status_code != 200:
+        send_email("", "login config test failed please fix it."       , "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    else:
+        pass
+
     response_data = response.json()
     print("Response Data :" , response_data)
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    assert diff_time < 5, f"too slow {diff_time}"
     assert ":shaberi.com" in response_data["user_id"], "Response does not contain 'user_id'"
     assert response_data["home_server"] == "shaberi.com", "Response does not contain 'home_sever'"
     assert "syt_" in response_data["access_token"], "Response does not contain 'access_token'" 
     assert "device_id" in response_data, "Response does not contain 'device_id'"
-    assert response_data["is_first"] == 1, "Response does not contain 'is_first'"
-    
-    #Extract access_token
-    global global_token
-    global_token = response_data.get("access_token")
-    write_global_token_to_csv()
     
 
+    if phone_number == "0975915790" :
+        assert response_data["is_first"] == 0, "Response does not contain 'is_first'"
+    else:
+        assert response_data["is_first"] == 1, "Response does not contain 'is_first'"
+    
+    #Extract access_token
+    global global_token, global_user_id
+    global_token = response_data.get("access_token")
+    global_user_id = response_data.get("user_id")
+    write_to_csv()
+    
 if __name__ == "__main__":
     pytest.main([__file__])
 

@@ -9,42 +9,61 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
+from setting import urls
+import hashlib
+from setting import send_email
 
-def read_global_token_from_csv():
+global_token = None
+global_user_id = None
+
+def read_csv():
+    global global_token, global_user_id
     with open("token.csv", "r") as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             if row[0] == "token":
-                return row[1]
-                  
-# token = read_global_token_from_csv()  
+                global_token = row[1]
+            elif row[0] == "user_id":
+                global_user_id = row[1]
 
 @pytest.mark.run(order=3)
 def test_wallet_config():
 
     # API details
-    url = "https://im-stg.imdevs.net/_matrix/client/r0/wallet/config"
-    # headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    url = f"{urls['prod']}/_matrix/client/r0/wallet/config"
     headers = {"Content-Type": "application/json"}
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "xuan@twim.cc"]
     data = {
 
     }
+    print("url:" , url)
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
     for i in range(5):
         # Make the POST requests
         response = requests.get(url, json=data, headers=headers)
-
-        # Validate the response
-        assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-        
-        # Assuming the response body is in JSON format
-        response_data = response.json()
-    print("Response Data :" , response_data)
     end_time = time.time()
     diff_time = end_time - start_time
 
+    #testing loading time
+    if diff_time < 5:
+        print("Loading test passed. ")
+    else:
+        send_email("", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+
+    if response.status_code != 200:
+        send_email("", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    else:
+        pass
+
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
     assert response_data["is_enable_wallet"] is True, "Wallet should be enabled"
     assert response_data["is_enable_deposit"] is True, "deposit should be enabled"
     assert response_data["is_enable_withdraw"] is True, "withdraw should be enabled"
@@ -55,32 +74,43 @@ def test_wallet_config():
     assert response_data["min_quota_of_send_red_packet"] == 0.01, "Unexpected min quota for sending red packet"
     assert response_data["max_quota_of_send_red_packet"] == 50.0, "Unexpected max quota for sending red packete"
 
+@pytest.mark.run(order=4)
+def test_wallet_setting_password():
 
-    #testing loading time
-    if diff_time < 0:
-        print("Test passed. ")
-    else:
-        send_email(subject, body, sender, recipients, password)
-    assert diff_time > 5, f"too slow {diff_time}"
+    read_csv()
+    # API details
+    url = f"{urls['prod']}/_matrix/client/r0/wallet/{global_user_id}/pay_password"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
 
-# Send Email
-current_time = datetime.now()
-formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
-subject = f"Test failed  {formatted_time}"
-body = "wallet config test failed please fix it."
-sender = "frandyfancy@gmail.com"
-recipients = "genman@twim.cc"
-password = "xjbtujjvqkywrslh"
+    #pre-request script
+    password = "888888"
+    data = f"{global_user_id}:{password}".encode('utf-8')
+    wallet_password = hashlib.md5(data).hexdigest()
+    # wallet_password = "b7fefe2e27e59da60142aa41dc656fa9"
 
-def send_email(subject, body, sender, recipients, password):
-    msg = MIMEText(body)
-    msg['Subject'] = subject
-    msg['From'] = sender
-    msg['To'] = recipients
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
-       smtp_server.login(sender, password)
-       smtp_server.sendmail(sender, recipients, msg.as_string())
-    print("Message sent!")
+    data = {
+        "wallet_password": f"{wallet_password}"
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    start_time = time.time()
+    for i in range(5):
+        # Make the POST requests
+        response = requests.post(url, json=data, headers=headers)
+        # Validate the response
+        if response.status_code == 400 :
+            assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        else:
+            assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+        
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    end_time = time.time()
+    diff_time = end_time - start_time
+
+
 
 
 if __name__ == "__main__":
