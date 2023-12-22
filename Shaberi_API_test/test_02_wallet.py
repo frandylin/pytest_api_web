@@ -11,20 +11,14 @@ import smtplib, ssl
 from datetime import datetime
 from setting import urls
 import hashlib
-from setting import send_email
+from setting import send_email, ReadCSV
 
-global_token = None
-global_user_id = None
-
-def read_csv():
-    global global_token, global_user_id
-    with open("token.csv", "r") as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            if row[0] == "token":
-                global_token = row[1]
-            elif row[0] == "user_id":
-                global_user_id = row[1]
+reader_csv = ReadCSV()
+reader_csv.read_csv()
+token = reader_csv.token
+user_id = reader_csv.user_id
+sid = reader_csv.sid
+client_secret = reader_csv.client_secret
 
 @pytest.mark.run(order=3)
 def test_wallet_config():
@@ -32,7 +26,7 @@ def test_wallet_config():
     # API details
     url = f"{urls['prod']}/_matrix/client/r0/wallet/config"
     headers = {"Content-Type": "application/json"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "xuan@twim.cc"]
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com" , "mac@twim.cc"]
     data = {
 
     }
@@ -47,23 +41,18 @@ def test_wallet_config():
     diff_time = end_time - start_time
 
     #testing loading time
-    if diff_time < 5:
+    if diff_time > 5 or response.status_code != 200:
+        send_email("[Wallet]", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    else:
         print("Loading test passed. ")
-    else:
-        send_email("", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
-
-    if response.status_code != 200:
-        send_email("", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
-    else:
-        pass
-
-    # Assuming the response body is in JSON format
-    response_data = response.json()
-    print("Response Data :" , response_data)
 
     # Validate the response
     assert diff_time < 5, f"too slow {diff_time}"
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
     assert response_data["is_enable_wallet"] is True, "Wallet should be enabled"
     assert response_data["is_enable_deposit"] is True, "deposit should be enabled"
     assert response_data["is_enable_withdraw"] is True, "withdraw should be enabled"
@@ -77,14 +66,13 @@ def test_wallet_config():
 @pytest.mark.run(order=4)
 def test_wallet_setting_password():
 
-    read_csv()
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/wallet/{global_user_id}/pay_password"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    url = f"{urls['prod']}/_matrix/client/r0/wallet/{user_id}/pay_password"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
 
     #pre-request script
     password = "888888"
-    data = f"{global_user_id}:{password}".encode('utf-8')
+    data = f"{user_id}:{password}".encode('utf-8')
     wallet_password = hashlib.md5(data).hexdigest()
     # wallet_password = "b7fefe2e27e59da60142aa41dc656fa9"
 
@@ -98,7 +86,7 @@ def test_wallet_setting_password():
     for i in range(5):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
-        # Validate the response
+        # Validate the response, 400 was already enable wallet status
         if response.status_code == 400 :
             assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         else:
@@ -107,13 +95,100 @@ def test_wallet_setting_password():
     # Assuming the response body is in JSON format
     response_data = response.json()
     print("Response Data :" , response_data)
+
+@pytest.mark.run(order=5)
+def test_wallet_information():
+    
+    # API details
+    url = f"{urls['prod']}/_matrix/client/r0/wallet/{user_id}/wallet_info/"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
+    data = {
+        "erase": False,
+        "auth": {
+            "session": f"{sid}",
+            "user": f"{user_id}",
+            "sid": f"{sid}", 
+            "client_secret": f"{client_secret}"  
+        }        
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    start_time = time.time()
+    for i in range(5):
+        # Make the POST requests
+        response = requests.get(url, json=data, headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
+
+    #testing loading time
+    if diff_time > 5 or response.status_code != 200:
+        send_email("[Wallet]", "wallet information test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    else:
+        print("Loading test passed. ")
+    
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    #ensure that three elements in the address_list
+    assert len(response_data["address_list"]) == 3
+    
+
+@pytest.mark.run(order=6)
+def test_wallet_records():
+    
+    # API details
+    url = f"{urls['prod']}/_matrix/client/r0/wallet/{user_id}/records"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
+    data = {
+
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    start_time = time.time()
+    for i in range(1):
+        # Make the POST requests
+        response = requests.get(url, json=data, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+
+    #testing loading time
+    if diff_time > 5 or response.status_code != 200:
+        send_email("[Wallet]", "wallet records test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    else:
+        print("Loading test passed. ")
+    
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+
+    assert "total" in response_data["total"], "Response does not contain 'total'"
+    assert "current_page" in response_data["current_page"], "Response does not contain 'current_page'"
+    assert response_data["per_page"] == 20, "Response does not equal 20"
+    assert "data" in response_data["data"], "Response does not contain 'data'"
+
+
+
+
+
+
 
 
 
 
 if __name__ == "__main__":
+
 
     pytest.main([__file__])
 

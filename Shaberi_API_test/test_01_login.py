@@ -11,7 +11,7 @@ from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
 import hashlib
-from setting import send_email
+from setting import send_email, generate_device_id
 
 
 
@@ -22,13 +22,6 @@ secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
 global_user_id = None
-
-def generate_device_id():
-    # 生成 UUID
-    device_id = uuid.uuid4()
-    # 將 UUID 轉換為無連字符的16進位字串
-    hex_string = str(device_id).replace('-', '')
-    return hex_string[:32]
 
 @pytest.mark.run(order=1)
 def test_register_msisdn():
@@ -69,12 +62,15 @@ def test_register_msisdn():
 
 
 def write_to_csv():
+    print("global_sid :", global_sid)
     # 检查 global_token 是否存在
-    if global_token is not None and global_user_id is not None:
+    if global_token is not None and global_user_id is not None and global_sid is not None:
         with open("token.csv", "w", newline="") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["token", global_token])
             writer.writerow(["user_id", global_user_id])
+            writer.writerow(["sid", global_sid])
+            writer.writerow(["client_secret", secret])
     else:
         print("Skipping writing to CSV.")
 
@@ -84,7 +80,7 @@ def test_login():
     url = f"{urls['prod']}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "xuan@twim.cc"]
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
 
     data = {
         "session_id": global_sid,
@@ -102,21 +98,19 @@ def test_login():
         response = requests.post(url, json=data, headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
-
-    if diff_time < 5:
+    
+    if diff_time > 5 or response.status_code != 200:
+        send_email("[Login]", "login test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    else:
         print("Loading test passed. ")
-    else:
-        send_email("", "login test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
 
-    if response.status_code != 200:
-        send_email("", "login config test failed please fix it."       , "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
-    else:
-        pass
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
+    # Assuming the response body is in JSON format
     response_data = response.json()
     print("Response Data :" , response_data)
-    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-    assert diff_time < 5, f"too slow {diff_time}"
     assert ":shaberi.com" in response_data["user_id"], "Response does not contain 'user_id'"
     assert response_data["home_server"] == "shaberi.com", "Response does not contain 'home_sever'"
     assert "syt_" in response_data["access_token"], "Response does not contain 'access_token'" 
