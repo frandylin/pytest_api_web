@@ -136,7 +136,8 @@ def test_wallet_information():
     response_data = response.json()
     print("Response Data :" , response_data)
     #ensure that three elements in the address_list
-    assert len(response_data["address_list"]) == 3
+    response_list = response_data[0]
+    assert len(response_list["address_list"]) == 3
     
 
 @pytest.mark.run(order=6)
@@ -153,7 +154,7 @@ def test_wallet_records():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(1):
+    for i in range(5):
         # Make the POST requests
         response = requests.get(url, json=data, headers=headers)
     end_time = time.time()
@@ -173,10 +174,10 @@ def test_wallet_records():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-    assert "total" in response_data["total"], "Response does not contain 'total'"
-    assert "current_page" in response_data["current_page"], "Response does not contain 'current_page'"
+    assert "total" in response_data, "Response does not contain 'total'"
+    assert "current_page" in response_data, "Response does not contain 'current_page'"
     assert response_data["per_page"] == 20, "Response does not equal 20"
-    assert "data" in response_data["data"], "Response does not contain 'data'"
+    assert "data" in response_data, "Response does not contain 'data'"
 
 
 

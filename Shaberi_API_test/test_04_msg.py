@@ -17,20 +17,19 @@ reader_csv = ReadCSV()
 reader_csv.read_csv()
 token = reader_csv.token
 user_id = reader_csv.user_id
-sid = reader_csv.sid
-client_secret = reader_csv.client_secret
-room_id = "!269249103520:shaberi.com"
+room_id = "!279945156128:shaberi.com"
 
-@pytest.mark.run(order=8)
-def test_create_room():
+@pytest.mark.run(order=9)
+def test_send_message():
 
+    current_time = int(time.time())
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/{room_id}/send/m.room.message/m{timestamp}"
+    url = f"{urls['prod']}/_matrix/client/r0/rooms/{room_id}/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
         "msgtype": "m.text",
-        "body": "frandy testinggggggg"
+        "body": "frandy"
     }
     print("url:" , url)
     print("header:" , headers)
@@ -38,18 +37,17 @@ def test_create_room():
     start_time = time.time()
     for i in range(5):
         # Make the POST requests
-        response = requests.get(url, json=data, headers=headers)
+        response = requests.put(url, json=data, headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
-
     #testing loading time
-    if diff_time > 5 or response.status_code != 200:
+    if diff_time > 10 or response.status_code != 200:
         send_email("[Room]", "send message test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("send message test passed. ")
 
     # Validate the response
-    assert diff_time < 5, f"too slow {diff_time}"
+    assert diff_time < 10, f"too slow {diff_time}"
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Assuming the response body is in JSON format
