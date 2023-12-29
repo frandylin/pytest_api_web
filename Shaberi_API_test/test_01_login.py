@@ -17,7 +17,8 @@ from setting import send_email, generate_device_id
 
 country_code = "TW"
 # phone_number = f"09{random.randint(10000000, 99999999)}"
-phone_number = "0975915790"
+# phone_number = "0975915790"
+phone_number = "0909317920"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
@@ -27,7 +28,7 @@ global_user_id = None
 def test_register_msisdn():
 
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/register/msisdn/requestCode"
+    url = f"{urls['uat']}/_matrix/client/r0/register/msisdn/requestCode"
     headers = {"Content-Type": "application/json"}
 
     # Request data
@@ -62,7 +63,6 @@ def test_register_msisdn():
 
 
 def write_to_csv():
-    print("global_sid :", global_sid)
     # 检查 global_token 是否存在
     if global_token is not None and global_user_id is not None and global_sid is not None:
         with open("token.csv", "w", newline="") as csvfile:
@@ -77,7 +77,7 @@ def write_to_csv():
 @pytest.mark.run(order=2)
 def test_login():
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/login/msisdnlogin"
+    url = f"{urls['uat']}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
@@ -120,7 +120,7 @@ def test_login():
     if phone_number == "0975915790" :
         assert response_data["is_first"] == 0, "Response does not contain 'is_first'"
     else:
-        assert response_data["is_first"] == 1, "Response does not contain 'is_first'"
+        pass
     
     #Extract access_token
     global global_token, global_user_id

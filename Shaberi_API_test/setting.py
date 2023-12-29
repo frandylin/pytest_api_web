@@ -49,6 +49,7 @@ class ReadCSV:
         self.user_id = None
         self.sid = None
         self.client_secret = None
+        self.wallet_password = None
 
     def read_csv(self):
         # 从 CSV 文件中读取设置并将其存储在类的属性中
@@ -63,6 +64,8 @@ class ReadCSV:
                     self.sid = row[1]
                 elif row[0] == "client_secret":
                     self.client_secret = row[1]
+                elif row[0] == "wallet_password":
+                    self.wallet_password = row[1]
 
 # def read_csv():
 #     token, user_id, sid, client_secret = None, None, None, None

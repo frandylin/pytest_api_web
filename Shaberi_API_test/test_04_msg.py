@@ -17,14 +17,14 @@ reader_csv = ReadCSV()
 reader_csv.read_csv()
 token = reader_csv.token
 user_id = reader_csv.user_id
-room_id = "!279945156128:shaberi.com"
+room_id = "!183481292480:shaberi.com"
 
-@pytest.mark.run(order=9)
+@pytest.mark.run(order=10)
 def test_send_message():
 
     current_time = int(time.time())
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/rooms/{room_id}/send/m.room.message/m{current_time}"
+    url = f"{urls['uat']}/_matrix/client/r0/rooms/{room_id}/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {

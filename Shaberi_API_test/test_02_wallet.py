@@ -19,12 +19,13 @@ token = reader_csv.token
 user_id = reader_csv.user_id
 sid = reader_csv.sid
 client_secret = reader_csv.client_secret
+global_wallet_password = None
 
 @pytest.mark.run(order=3)
 def test_wallet_config():
 
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/wallet/config"
+    url = f"{urls['uat']}/_matrix/client/r0/wallet/config"
     headers = {"Content-Type": "application/json"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com" , "mac@twim.cc"]
     data = {
@@ -67,15 +68,16 @@ def test_wallet_config():
 def test_wallet_setting_password():
 
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/wallet/{user_id}/pay_password"
+    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/pay_password"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
 
     #pre-request script
     password = "888888"
     data = f"{user_id}:{password}".encode('utf-8')
     wallet_password = hashlib.md5(data).hexdigest()
-    # wallet_password = "b7fefe2e27e59da60142aa41dc656fa9"
-
+    global global_wallet_password
+    global_wallet_password = wallet_password
+    write_to_csv()
     data = {
         "wallet_password": f"{wallet_password}"
     }
@@ -90,7 +92,9 @@ def test_wallet_setting_password():
         if response.status_code == 400 :
             assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         else:
-            assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+            response_data = response.json()
+            print("Response Data :" , response_data)
+            assert response.status_code == 201, f"Unexpected status code: {response.status_code}"
         
     # Assuming the response body is in JSON format
     response_data = response.json()
@@ -100,7 +104,7 @@ def test_wallet_setting_password():
 def test_wallet_information():
     
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/wallet/{user_id}/wallet_info/"
+    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/wallet_info/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -135,6 +139,7 @@ def test_wallet_information():
     # Assuming the response body is in JSON format
     response_data = response.json()
     print("Response Data :" , response_data)
+    time.sleep(3)
     #ensure that three elements in the address_list
     response_list = response_data[0]
     assert len(response_list["address_list"]) == 3
@@ -144,7 +149,7 @@ def test_wallet_information():
 def test_wallet_records():
     
     # API details
-    url = f"{urls['prod']}/_matrix/client/r0/wallet/{user_id}/records"
+    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/records"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -179,14 +184,15 @@ def test_wallet_records():
     assert response_data["per_page"] == 20, "Response does not equal 20"
     assert "data" in response_data, "Response does not contain 'data'"
 
-
-
-
-
-
-
-
-
+def write_to_csv():
+    # 检查 global_token 是否存在
+    if global_wallet_password is not None:
+        # "a" 模式代表 append ，文件存在的話將在文件尾段加入新的一行
+        with open("token.csv", "a", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["wallet_password", global_wallet_password])
+    else:
+        print("Skipping writing to CSV.")
 
 if __name__ == "__main__":
 
