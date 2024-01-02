@@ -19,7 +19,7 @@ token = reader_csv.token
 user_id = reader_csv.user_id
 room_id = "!183481292480:shaberi.com"
 
-@pytest.mark.run(order=10)
+@pytest.mark.run(order=11)
 def test_send_message():
 
     current_time = int(time.time())

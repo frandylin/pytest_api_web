@@ -61,19 +61,6 @@ def test_register_msisdn():
     global global_sid
     global_sid = response_data.get("sid")
 
-
-def write_to_csv():
-    # 检查 global_token 是否存在
-    if global_token is not None and global_user_id is not None and global_sid is not None:
-        with open("token.csv", "w", newline="") as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(["token", global_token])
-            writer.writerow(["user_id", global_user_id])
-            writer.writerow(["sid", global_sid])
-            writer.writerow(["client_secret", secret])
-    else:
-        print("Skipping writing to CSV.")
-
 @pytest.mark.run(order=2)
 def test_login():
     # API details
@@ -94,7 +81,7 @@ def test_login():
     print("POST Data:" , data)
 
     start_time = time.time()
-    for i in range(2):
+    for i in range(1):
         response = requests.post(url, json=data, headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
@@ -116,7 +103,6 @@ def test_login():
     assert "syt_" in response_data["access_token"], "Response does not contain 'access_token'" 
     assert "device_id" in response_data, "Response does not contain 'device_id'"
     
-
     if phone_number == "0975915790" :
         assert response_data["is_first"] == 0, "Response does not contain 'is_first'"
     else:
@@ -127,6 +113,18 @@ def test_login():
     global_token = response_data.get("access_token")
     global_user_id = response_data.get("user_id")
     write_to_csv()
+
+def write_to_csv():
+    # 检查 global_token 是否存在
+    if global_token is not None and global_user_id is not None and global_sid is not None:
+        with open("token.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["token", global_token])
+            writer.writerow(["user_id", global_user_id])
+            writer.writerow(["sid", global_sid])
+            writer.writerow(["client_secret", secret])
+    else:
+        print("Skipping writing to CSV.")
     
 if __name__ == "__main__":
     pytest.main([__file__])

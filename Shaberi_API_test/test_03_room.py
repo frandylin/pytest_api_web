@@ -21,6 +21,7 @@ sid = reader_csv.sid
 client_secret = reader_csv.client_secret
 wallet_password = reader_csv.wallet_password
 global_room_id = None
+global_red_packet_id = None
 
 @pytest.mark.run(order=7)
 def test_create_room():
@@ -109,7 +110,47 @@ def test_send_packet():
 
     # #testing loading time
     # if diff_time > 5 or response.status_code != 200:
-    #     send_email("[Room]", "create room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    #     send_email("[Room]", "send red packet test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    # else:
+    #     print("Loading test passed. ")
+
+    # Validate the response
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    # Assuming the response body is in JSON format
+    assert "balance_amount" in response_data, "Response does not contain 'balance_amount'"
+    assert "fee" in response_data, "Response does not contain 'fee'"
+    assert "expire_at" in response_data, "Response does not contain 'expire_at'"
+    assert "red_packet_id" in response_data, "Response does not contain 'red_packet_id'"
+    global global_red_packet_id
+    global_red_packet_id = response_data.get("red_packet_id")
+
+@pytest.mark.run(order=9)
+def test_receive_packet():
+
+    # API details
+    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
+
+    data = {
+
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    start_time = time.time()
+    for i in range(1):
+        # Make the POST requests
+        response = requests.post(url, json=data, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+
+    # #testing loading time
+    # if diff_time > 5 or response.status_code != 200:
+    #     send_email("[Room]", "send red packet test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     # else:
     #     print("Loading test passed. ")
 
@@ -120,11 +161,12 @@ def test_send_packet():
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Assuming the response body is in JSON format
-    response_data = response.json()
-    print("Response Data :" , response_data)
-    # assert ":shaberi.com" in response_data["room_id"], "Response does not contain 'room_id'"
+    assert "balance_amount" in response_data, "Response does not contain 'balance_amount'"
+    assert "tran_amount" in response_data, "Response does not contain 'tran_amount'"
+    assert "remain" in response_data, "Response does not contain 'remain'"
+    assert "claim_count" in response_data, "Response does not contain 'claim_count'"
 
-@pytest.mark.run(order=9)
+@pytest.mark.run(order=10)
 def test_leave_room():
 
     # API details
