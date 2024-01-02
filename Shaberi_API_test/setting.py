@@ -42,6 +42,16 @@ urls = {
     "dev": "https://im-dev.imdevs.net",
 }
 
+def get_environment_url(env):
+    if env == "prod":
+        return urls["prod"]
+    elif env == "uat":
+        return urls["uat"]
+    elif env == "stg":
+        return urls["stg"]
+    elif env == "dev":
+        return urls["dev"]
+
 class ReadCSV:
     def __init__(self):
         # 初始化类的属性
@@ -66,6 +76,14 @@ class ReadCSV:
                     self.client_secret = row[1]
                 elif row[0] == "wallet_password":
                     self.wallet_password = row[1]
+    def reload_csv(self):
+    # 重新读取 CSV 数据
+        self.token = None
+        self.user_id = None
+        self.sid = None
+        self.client_secret = None
+        self.wallet_password = None
+        self.read_csv()
 
 # def read_csv():
 #     token, user_id, sid, client_secret = None, None, None, None

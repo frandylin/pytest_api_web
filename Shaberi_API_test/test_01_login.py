@@ -3,7 +3,7 @@ import pytest
 import uuid
 import random
 import csv
-from setting import urls
+from setting import get_environment_url
 import time
 import smtplib
 from email.mime.text import MIMEText
@@ -16,9 +16,9 @@ from setting import send_email, generate_device_id
 
 
 country_code = "TW"
-# phone_number = f"09{random.randint(10000000, 99999999)}"
+phone_number = f"09{random.randint(10000000, 99999999)}"
 # phone_number = "0975915790"
-phone_number = "0909317920"
+# phone_number = "0909317920"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
@@ -28,7 +28,8 @@ global_user_id = None
 def test_register_msisdn():
 
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/register/msisdn/requestCode"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/register/msisdn/requestCode"
     headers = {"Content-Type": "application/json"}
 
     # Request data
@@ -77,7 +78,8 @@ def write_to_csv():
 @pytest.mark.run(order=2)
 def test_login():
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/login/msisdnlogin"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
@@ -100,7 +102,7 @@ def test_login():
     diff_time = end_time - start_time
     
     if diff_time > 5 or response.status_code != 200:
-        send_email("[Login]", "login test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Login]", "login test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
 

@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
-from setting import urls
+from setting import get_environment_url
 import hashlib
 from setting import send_email, ReadCSV
 
@@ -25,7 +25,8 @@ global_wallet_password = None
 def test_wallet_config():
 
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/wallet/config"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/config"
     headers = {"Content-Type": "application/json"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com" , "mac@twim.cc"]
     data = {
@@ -43,7 +44,7 @@ def test_wallet_config():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email("[Wallet]", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Wallet]", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
 
@@ -68,7 +69,8 @@ def test_wallet_config():
 def test_wallet_setting_password():
 
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/pay_password"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/pay_password"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
 
     #pre-request script
@@ -104,7 +106,8 @@ def test_wallet_setting_password():
 def test_wallet_information():
     
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/wallet_info/"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/wallet_info/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -128,7 +131,7 @@ def test_wallet_information():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email("[Wallet]", "wallet information test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Wallet]", "wallet information test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
     
@@ -149,7 +152,8 @@ def test_wallet_information():
 def test_wallet_records():
     
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/records"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/records"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -167,7 +171,7 @@ def test_wallet_records():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email("[Wallet]", "wallet records test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Wallet]", "wallet records test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
     

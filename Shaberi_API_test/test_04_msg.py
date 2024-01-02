@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
-from setting import urls
+from setting import get_environment_url
 import hashlib
 from setting import send_email, ReadCSV
 
@@ -24,7 +24,8 @@ def test_send_message():
 
     current_time = int(time.time())
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/rooms/{room_id}/send/m.room.message/m{current_time}"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
@@ -42,7 +43,7 @@ def test_send_message():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email("[Room]", "send message test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Message]", "send message test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("send message test passed. ")
 
