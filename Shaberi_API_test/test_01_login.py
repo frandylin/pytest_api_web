@@ -16,9 +16,10 @@ from setting import send_email, generate_device_id
 
 
 country_code = "TW"
-phone_number = f"09{random.randint(10000000, 99999999)}"
+# phone_number = f"09{random.randint(10000000, 99999999)}"
 # phone_number = "0975915790"
-# phone_number = "0909317920"
+phone_number = "0909317920"
+# phone_number = "0909317921"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
@@ -61,6 +62,19 @@ def test_register_msisdn():
     #Extract session_id
     global global_sid
     global_sid = response_data.get("sid")
+
+def write_to_csv():
+    # 检查 global_token 是否存在
+    if global_token is not None and global_user_id is not None and global_sid is not None:
+        with open("token.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["token", global_token])
+            writer.writerow(["user_id", global_user_id])
+            writer.writerow(["sid", global_sid])
+            writer.writerow(["client_secret", secret])
+    else:
+        print("Skipping writing to CSV.")
+    
 
 @pytest.mark.run(order=2)
 def test_login():
@@ -115,18 +129,6 @@ def test_login():
     global_token = response_data.get("access_token")
     global_user_id = response_data.get("user_id")
     write_to_csv()
-
-def write_to_csv():
-    # 检查 global_token 是否存在
-    if global_token is not None and global_user_id is not None and global_sid is not None:
-        with open("token.csv", "w", newline="") as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(["token", global_token])
-            writer.writerow(["user_id", global_user_id])
-            writer.writerow(["sid", global_sid])
-            writer.writerow(["client_secret", secret])
-    else:
-        print("Skipping writing to CSV.")
     
 if __name__ == "__main__":
     pytest.main([__file__])

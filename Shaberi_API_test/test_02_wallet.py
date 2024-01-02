@@ -13,12 +13,24 @@ from setting import get_environment_url
 import hashlib
 from setting import send_email, ReadCSV
 
-reader_csv = ReadCSV()
-reader_csv.read_csv()
-token = reader_csv.token
-user_id = reader_csv.user_id
-sid = reader_csv.sid
-client_secret = reader_csv.client_secret
+#get variable
+def get_variable():
+    reader_csv = ReadCSV()
+    reader_csv.read_csv()
+    token = reader_csv.token
+    user_id = reader_csv.user_id
+    sid = reader_csv.sid
+    client_secret = reader_csv.client_secret
+    global global_token, global_user_id, global_sid, global_client_secret
+    global_token = token
+    global_user_id = user_id 
+    global_sid = sid
+    global_client_secret = client_secret
+
+global_token = None
+global_user_id = None 
+global_sid = None
+global_client_secret = None
 global_wallet_password = None
 
 @pytest.mark.run(order=3)
@@ -67,15 +79,16 @@ def test_wallet_config():
 
 @pytest.mark.run(order=4)
 def test_wallet_setting_password():
-
+    
     # API details
+    get_variable()
     env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/pay_password"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/pay_password"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
 
     #pre-request script
     password = "888888"
-    data = f"{user_id}:{password}".encode('utf-8')
+    data = f"{global_user_id}:{password}".encode('utf-8')
     wallet_password = hashlib.md5(data).hexdigest()
     global global_wallet_password
     global_wallet_password = wallet_password
@@ -104,19 +117,20 @@ def test_wallet_setting_password():
 
 @pytest.mark.run(order=5)
 def test_wallet_information():
-    
+
     # API details
+    get_variable()
     env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/wallet_info/"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_info/"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
         "erase": False,
         "auth": {
-            "session": f"{sid}",
-            "user": f"{user_id}",
-            "sid": f"{sid}", 
-            "client_secret": f"{client_secret}"  
+            "session": f"{global_sid}",
+            "user": f"{global_user_id}",
+            "sid": f"{global_sid}", 
+            "client_secret": f"{global_client_secret}" 
         }        
     }
     print("url:" , url)
@@ -150,11 +164,12 @@ def test_wallet_information():
 
 @pytest.mark.run(order=6)
 def test_wallet_records():
-    
+
     # API details
+    get_variable()
     env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/records"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/records"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
 

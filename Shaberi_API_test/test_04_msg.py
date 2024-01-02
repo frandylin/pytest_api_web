@@ -13,20 +13,31 @@ from setting import get_environment_url
 import hashlib
 from setting import send_email, ReadCSV
 
-reader_csv = ReadCSV()
-reader_csv.read_csv()
-token = reader_csv.token
-user_id = reader_csv.user_id
-room_id = "!183481292480:shaberi.com"
+#get variable
+def get_variable():
+    reader_csv = ReadCSV()
+    reader_csv.read_csv()
+    token = reader_csv.token
+    user_id = reader_csv.user_id
+    wallet_password = reader_csv.wallet_password
+    global global_token, global_user_id, global_wallet_password
+    global_token = token
+    global_user_id = user_id 
+
+global_token = None
+global_user_id = None 
+
+room_id = "!299555311424:shaberi.com"
 
 @pytest.mark.run(order=11)
 def test_send_message():
 
     current_time = int(time.time())
     # API details
+    get_variable()
     env = "uat"
     url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.room.message/m{current_time}"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
         "msgtype": "m.text",

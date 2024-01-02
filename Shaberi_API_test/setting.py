@@ -76,17 +76,9 @@ class ReadCSV:
                     self.client_secret = row[1]
                 elif row[0] == "wallet_password":
                     self.wallet_password = row[1]
-    def reload_csv(self):
-    # 重新读取 CSV 数据
-        self.token = None
-        self.user_id = None
-        self.sid = None
-        self.client_secret = None
-        self.wallet_password = None
-        self.read_csv()
 
 # def read_csv():
-#     token, user_id, sid, client_secret = None, None, None, None
+#     token, user_id, sid, client_secret, wallet_password = None, None, None, None, None
 #     with open("token.csv", "r") as csvfile:
 #         reader = csv.reader(csvfile)
 #         for row in reader:
