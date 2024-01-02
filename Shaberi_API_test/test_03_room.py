@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
-from setting import urls
+from setting import get_environment_url
 import hashlib
 from setting import send_email, ReadCSV
 
@@ -27,7 +27,8 @@ global_red_packet_id = None
 def test_create_room():
 
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/createRoom"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/createRoom"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
@@ -57,7 +58,7 @@ def test_create_room():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email("[Room]", "create room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Room]", "create room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
 
@@ -77,7 +78,8 @@ def test_create_room():
 def test_send_packet():
 
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/wallet/{user_id}/rooms/{global_room_id}/red_packet"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/rooms/{global_room_id}/red_packet"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     total_amount = "0.010"
@@ -170,7 +172,8 @@ def test_receive_packet():
 def test_leave_room():
 
     # API details
-    url = f"{urls['uat']}/_matrix/client/r0/rooms/{global_room_id}/leave"
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/leave"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
@@ -188,7 +191,7 @@ def test_leave_room():
 
     # testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email("[Room]", "create room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Room]", "leave room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
 
