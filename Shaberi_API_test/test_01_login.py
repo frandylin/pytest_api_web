@@ -29,7 +29,7 @@ global_user_id = None
 def test_register_msisdn():
 
     # API details
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/register/msisdn/requestCode"
     headers = {"Content-Type": "application/json"}
 
@@ -79,7 +79,7 @@ def write_to_csv():
 @pytest.mark.run(order=2)
 def test_login():
     # API details
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()

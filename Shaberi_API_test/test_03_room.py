@@ -31,12 +31,12 @@ global_wallet_password = None
 global_room_id = None
 global_red_packet_id = None
 
-@pytest.mark.run(order=7)
+@pytest.mark.run(order=10)
 def test_create_room():
     
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/createRoom"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
@@ -83,12 +83,12 @@ def test_create_room():
     global global_room_id
     global_room_id = response_data.get("room_id")
 
-@pytest.mark.run(order=8)
+@pytest.mark.run(order=11)
 def test_send_packet():
 
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
@@ -139,12 +139,12 @@ def test_send_packet():
     global global_red_packet_id
     global_red_packet_id = response_data.get("red_packet_id")
 
-@pytest.mark.run(order=9)
+@pytest.mark.run(order=12)
 def test_receive_packet():
 
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
@@ -180,13 +180,13 @@ def test_receive_packet():
     assert "remain" in response_data, "Response does not contain 'remain'"
     assert "claim_count" in response_data, "Response does not contain 'claim_count'"
 
-@pytest.mark.run(order=10)
+@pytest.mark.run(order=13)
 def test_send_message():
 
     current_time = int(time.time())
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
@@ -218,12 +218,12 @@ def test_send_message():
     print("Response Data :" , response_data)
     assert "$" in response_data["event_id"], "Response does not contain 'event_id'"
 
-@pytest.mark.run(order=11)
+@pytest.mark.run(order=14)
 def test_revise_room_name():
 
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/state/m.room.name/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
@@ -243,12 +243,12 @@ def test_revise_room_name():
     print("Response Data :" , response_data)
     assert "$" in response_data["event_id"], "Response does not contain 'event_id'"
 
-@pytest.mark.run(order=12)
+@pytest.mark.run(order=15)
 def test_serch_room_members():
 
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/joined_members"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
@@ -267,12 +267,12 @@ def test_serch_room_members():
     print("Response Data :" , response_data)
     assert "joined" in response_data, "Response does not contain 'event_id'"
 
-@pytest.mark.run(order=13)
+@pytest.mark.run(order=16)
 def test_leave_room():
 
     # API details
     get_variable()
-    env = "uat"
+    env = "stg"
     url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/leave"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
