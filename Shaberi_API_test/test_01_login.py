@@ -16,9 +16,9 @@ from setting import send_email, generate_device_id
 
 
 country_code = "TW"
-# phone_number = f"09{random.randint(10000000, 99999999)}"
+phone_number = f"09{random.randint(10000000, 99999999)}"
 # phone_number = "0975915790"
-phone_number = "0909317920"
+# phone_number = "0909317920"
 # phone_number = "0909317921"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None

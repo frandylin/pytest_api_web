@@ -6,12 +6,14 @@ import hashlib
 from setting_pressure import get_environment_url, generate_device_id
 import uuid
 import random
+from decimal import Decimal, ROUND_HALF_UP
 
 token_table = {}
 env = "stg"
 room_id = "!995433889696:shaberi.com"
 current_time = int(time.time())
-# for i in range(1, 30):
+total_tran_amount = Decimal('0')
+# for i in range(1, 2):
 #     #請求驗證碼
 #     phone_number = f"09{random.randint(10000000, 99999999)}"
 #     print(f"[{phone_number}] 驗證碼")
@@ -80,7 +82,7 @@ current_time = int(time.time())
 #     }
 #     response = requests.put(url, json=data, headers=headers)
 
-# 读取 user.json 文件的现有数据，如果文件不存在则创建一个空字典
+# #读取 user.json 文件的现有数据，如果文件不存在则创建一个空字典
 # try:
 #     with open("user.json", "r") as infile:
 #         existing_data = json.load(infile)
@@ -88,7 +90,7 @@ current_time = int(time.time())
 #     existing_data = {}
 #     # 将新数据合并到现有数据中
 # existing_data.update(token_table)
-
+##將資料寫入檔案
 # with open("user.json", "w") as outfile:
 #     outfile.write(json.dumps(existing_data))
 
@@ -103,6 +105,7 @@ with open("user.json", "r") as infile:
         # 将解析的数据合并到 token_table 中
         token_table.update(data)
 
+#打字
 # for phone_number in sorted(token_table.keys()):
 #     user_id, token = token_table[phone_number]
 #     print(f"[{phone_number}] 打個字")
@@ -114,7 +117,7 @@ with open("user.json", "r") as infile:
 #     }
 #     response = requests.put(url, json=data, headers=headers)
 
-#啟用錢包
+# 啟用錢包
 # for phone_number in sorted(token_table.keys()):
 #     user_id, token = token_table[phone_number]
 #     print(f"[{phone_number}] 啟用錢包")
@@ -143,8 +146,8 @@ def send_packet():
     password = "888888"
     data = f"{user_id}:{password}".encode('utf-8')
     wallet_password = hashlib.md5(data).hexdigest()
-    total_amount = "40.000"
-    count = 10
+    total_amount = "50.000"
+    count = 150
     fee = "0.000"
     red_packet_type = 10
     key = "shaberi_key_2023"
@@ -159,7 +162,8 @@ def send_packet():
         "total_amount": total_amount,
         "note": "恭喜發財 😂",
         "sign":f"{wallet_sign}",
-        "fee": fee
+        "fee": fee,
+        "version": 2
     }
     print("POST Data:" , data)
     # Make the POST requests
@@ -172,28 +176,29 @@ def send_packet():
     expire_at = response_data.get("expire_at")
 
     #發紅包訊息
-    print("發紅包訊息")
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.red_packet.send/m{current_time}"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
-    data = {
-        "body": "frandy 發的紅包快來搶啊!",
-        "count": count,
-        "expire_at": expire_at,
-        "fee": fee,
-        "msgtype": "m.red_packet",
-        "red_packet_id": red_packet_id,
-        "red_packet_type": red_packet_type,
-        "total_amount": total_amount,
-        "tran_amount": total_amount,
-    }
-    print("POST Data:" , data)
-    response = requests.put(url, json=data, headers=headers)
-    response_data = response.json()
-    print("Response Data :" , response_data)
+    # print("發紅包訊息")
+    # url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.red_packet.send/m{current_time}"
+    # headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    # data = {
+    #     "body": "frandy 發的紅包快來搶啊!",
+    #     "count": count,
+    #     "expire_at": expire_at,
+    #     "fee": fee,
+    #     "msgtype": "m.red_packet",
+    #     "red_packet_id": red_packet_id,
+    #     "red_packet_type": red_packet_type,
+    #     "total_amount": total_amount,
+    #     "tran_amount": total_amount,
+    # }
+    # print("POST Data:" , data)
+    # response = requests.put(url, json=data, headers=headers)
+    # response_data = response.json()
+    # print("Response Data :" , response_data)
+    # time.sleep(2)
     return red_packet_id
 
 red_packet_id = send_packet()
-# red_packet_id = "7012b4ca-b93d-42ab-aabd-1bc81acdd1a8"
+# red_packet_id = "87fdf107-7644-4fab-b39a-6eb95a77ac43"
 
 #領紅包
 for phone_number in sorted(token_table.keys()):
@@ -210,23 +215,25 @@ for phone_number in sorted(token_table.keys()):
     if "remain" not in response_data:
         continue
     remain = response_data.get("remain")
-    tran_amount = response_data.get("tran_amount")
+    tran_amount = Decimal(str(response_data.get("tran_amount")))
+    #將每筆領取金額加總
+    total_tran_amount += tran_amount
     #傳送系統訊息
-    print(f"[{phone_number}] 領紅包訊息")
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.red_packet.claim/m{current_time}"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
-    data = {
-        "msgtype": "m.red_packet",
-        "red_packet_id": red_packet_id,
-        "red_packet_sender_id": user_id,
-        "remain": f"{remain}",
-        "tran_amount": f"{tran_amount}",
-    }
-    response = requests.put(url, json=data, headers=headers)
-    print("Post Data :" , data)
-    response_data = response.json()
-    print("Response Data :" , response_data)
-    print("Response Data :" , response.status_code)
-    
+    # print(f"[{phone_number}] 領紅包訊息")
+    # url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.red_packet.claim/m{current_time}"
+    # headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    # data = {
+    #     "msgtype": "m.red_packet",
+    #     "red_packet_id": red_packet_id,
+    #     "red_packet_sender_id": "@eefrhkciwqee:shaberi.com",
+    #     "remain": f"{remain}",
+    #     "tran_amount": f"{tran_amount}",
+    # }
+    # response = requests.put(url, json=data, headers=headers)
+    # print("Post Data :" , data)
+    # response_data = response.json()
+    # print("Response Data :" , response_data)
+    # print("Response Data :" , response.status_code)
 
+print("Compare Total Tran Amount:", total_tran_amount)
 

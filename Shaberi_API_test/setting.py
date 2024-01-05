@@ -52,6 +52,17 @@ def get_environment_url(env):
     elif env == "dev":
         return urls["dev"]
 
+#only for wallet urls
+def get_environment_wallet_url(env):
+    if env == "prod":
+        return "https://svzyyges3qk6b6s62v88qts.letsgomars.com"
+    elif env == "uat":
+        return "https://im-uat-aaj7xg4ds.imdevs.net"
+    elif env == "stg":
+        return "https://im-stg-pzx.imdevs.net"
+    elif env == "dev":
+        return "https://im-dev-pzx.imdevs.net"
+
 class ReadCSV:
     def __init__(self):
         # 初始化类的属性

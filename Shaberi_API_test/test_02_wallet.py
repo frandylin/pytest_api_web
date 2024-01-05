@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
-from setting import get_environment_url
+from setting import get_environment_wallet_url
 import hashlib
 from setting import send_email, ReadCSV
 
@@ -39,7 +39,7 @@ def test_wallet_config():
 
     # API details
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/config"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/config"
     headers = {"Content-Type": "application/json"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com" , "mac@twim.cc"]
     data = {
@@ -61,13 +61,13 @@ def test_wallet_config():
     else:
         print("Loading test passed. ")
 
+    response_data = response.json()
+    print("Response Data :" , response_data)
     # Validate the response
     assert diff_time < 5, f"too slow {diff_time}"
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Assuming the response body is in JSON format
-    response_data = response.json()
-    print("Response Data :" , response_data)
     assert response_data["is_enable_wallet"] is True, "Wallet should be enabled"
     assert response_data["is_enable_deposit"] is True, "deposit should be enabled"
     assert response_data["is_enable_withdraw"] is True, "withdraw should be enabled"
@@ -84,7 +84,7 @@ def test_wallet_setting_password():
     # API details
     get_variable()
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/pay_password"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/pay_password"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
 
     #pre-request script
@@ -122,7 +122,7 @@ def test_wallet_information():
     # API details
     get_variable()
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_info/"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_info/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -169,7 +169,7 @@ def test_wallet_records():
     # API details
     get_variable()
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/records"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/records"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -210,7 +210,7 @@ def test_wallet_address():
     # API details
     get_variable()
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -252,7 +252,7 @@ def test_wallet_address_change():
     # API details
     get_variable()
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address/{global_wallet_address}/"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address/{global_wallet_address}/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
@@ -292,7 +292,7 @@ def test_wallet_address_delete():
     # API details
     get_variable()
     env = "stg"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address/{global_wallet_address}/"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address/{global_wallet_address}/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
     data = {
