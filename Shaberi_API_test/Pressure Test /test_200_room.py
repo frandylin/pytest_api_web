@@ -132,67 +132,68 @@ with open("user.json", "r") as infile:
 #     response_data = response.json()
 #     print("Response Data :" , response_data)
 
-#發紅包
-# def send_packet():
-#     print("發紅包")
-#     phone_number = "0909317920"
-#     user_id, token = token_table[phone_number]
-#     # API details
-#     url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/rooms/{room_id}/red_packet"
-#     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
-#     password = "888888"
-#     data = f"{user_id}:{password}".encode('utf-8')
-#     wallet_password = hashlib.md5(data).hexdigest()
-#     total_amount = "40.000"
-#     count = 10
-#     fee = "0.000"
-#     red_packet_type = 10
-#     key = "shaberi_key_2023"
-#     print("token:", token)
-#     print(f"{wallet_password}:{user_id}:{total_amount}:{fee}:{count}:{red_packet_type}:{room_id}:{key}")
-#     data_hash = f"{wallet_password}:{user_id}:{total_amount}:{fee}:{count}:{red_packet_type}:{room_id}:{key}".encode('utf-8')
-#     wallet_sign = hashlib.md5(data_hash).hexdigest()
-#     data = {
-#         #1 是單人 10 群組隨機 11群組固定
-#         "red_packet_type": red_packet_type, 
-#         "count": count,
-#         "total_amount": total_amount,
-#         "note": "恭喜發財 😂",
-#         "sign":f"{wallet_sign}",
-#         "fee": fee
-#     }
-#     print("POST Data:" , data)
-#     # Make the POST requests
-#     response = requests.post(url, json=data, headers=headers)
+# 發紅包
+def send_packet():
+    print("發紅包")
+    phone_number = "0909317920"
+    user_id, token = token_table[phone_number]
+    # API details
+    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{user_id}/rooms/{room_id}/red_packet"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    password = "888888"
+    data = f"{user_id}:{password}".encode('utf-8')
+    wallet_password = hashlib.md5(data).hexdigest()
+    total_amount = "40.000"
+    count = 10
+    fee = "0.000"
+    red_packet_type = 10
+    key = "shaberi_key_2023"
+    print("token:", token)
+    print(f"{wallet_password}:{user_id}:{total_amount}:{fee}:{count}:{red_packet_type}:{room_id}:{key}")
+    data_hash = f"{wallet_password}:{user_id}:{total_amount}:{fee}:{count}:{red_packet_type}:{room_id}:{key}".encode('utf-8')
+    wallet_sign = hashlib.md5(data_hash).hexdigest()
+    data = {
+        #1 是單人 10 群組隨機 11群組固定
+        "red_packet_type": red_packet_type, 
+        "count": count,
+        "total_amount": total_amount,
+        "note": "恭喜發財 😂",
+        "sign":f"{wallet_sign}",
+        "fee": fee
+    }
+    print("POST Data:" , data)
+    # Make the POST requests
+    response = requests.post(url, json=data, headers=headers)
 
-#     # Validate the response
-#     response_data = response.json()
-#     print("Response Data :" , response_data)
-#     red_packet_id = response_data.get("red_packet_id")
-#     expire_at = response_data.get("expire_at")
+    # Validate the response
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    red_packet_id = response_data.get("red_packet_id")
+    expire_at = response_data.get("expire_at")
 
-#     #發紅包訊息
-#     print("發紅包訊息")
-#     url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.red_packet.send/m{current_time}"
-#     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
-#     data = {
-#         "body": "frandy 發的紅包快來搶啊!",
-#         "count": count,
-#         "expire_at": expire_at,
-#         "fee": fee,
-#         "msgtype": "m.red_packet",
-#         "red_packet_id": red_packet_id,
-#         "red_packet_type": red_packet_type,
-#         "total_amount": total_amount,
-#         "tran_amount": total_amount,
-#     }
-#     print("POST Data:" , data)
-#     response = requests.put(url, json=data, headers=headers)
-#     response_data = response.json()
-#     print("Response Data :" , response_data)
-#     return red_packet_id
+    #發紅包訊息
+    print("發紅包訊息")
+    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{room_id}/send/m.red_packet.send/m{current_time}"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    data = {
+        "body": "frandy 發的紅包快來搶啊!",
+        "count": count,
+        "expire_at": expire_at,
+        "fee": fee,
+        "msgtype": "m.red_packet",
+        "red_packet_id": red_packet_id,
+        "red_packet_type": red_packet_type,
+        "total_amount": total_amount,
+        "tran_amount": total_amount,
+    }
+    print("POST Data:" , data)
+    response = requests.put(url, json=data, headers=headers)
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    return red_packet_id
 
-red_packet_id = "7012b4ca-b93d-42ab-aabd-1bc81acdd1a8"
+red_packet_id = send_packet()
+# red_packet_id = "7012b4ca-b93d-42ab-aabd-1bc81acdd1a8"
 
 #領紅包
 for phone_number in sorted(token_table.keys()):
