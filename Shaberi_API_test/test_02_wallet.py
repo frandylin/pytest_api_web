@@ -26,6 +26,7 @@ def get_variable():
     global_user_id = user_id 
     global_sid = sid
     global_client_secret = client_secret
+    global_wallet_record_id
 
 global_token = None
 global_user_id = None 
@@ -33,25 +34,21 @@ global_sid = None
 global_client_secret = None
 global_wallet_password = None
 global_wallet_address = None
+global_wallet_record_id = None
 
 @pytest.mark.run(order=3)
 def test_wallet_config():
 
     # API details
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/config"
-    headers = {"Content-Type": "application/json"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com" , "mac@twim.cc"]
-    data = {
 
-    }
     print("url:" , url)
-    print("header:" , headers)
-    print("POST Data:" , data)
     start_time = time.time()
     for i in range(5):
         # Make the POST requests
-        response = requests.get(url, json=data, headers=headers)
+        response = requests.get(url)
     end_time = time.time()
     diff_time = end_time - start_time
 
@@ -60,14 +57,13 @@ def test_wallet_config():
         send_email(f"[{env}][Wallet]", "wallet config test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
     else:
         print("Loading test passed. ")
-
-    response_data = response.json()
-    print("Response Data :" , response_data)
     # Validate the response
     assert diff_time < 5, f"too slow {diff_time}"
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
     assert response_data["is_enable_wallet"] is True, "Wallet should be enabled"
     assert response_data["is_enable_deposit"] is True, "deposit should be enabled"
     assert response_data["is_enable_withdraw"] is True, "withdraw should be enabled"
@@ -83,7 +79,7 @@ def test_wallet_setting_password():
     
     # API details
     get_variable()
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/pay_password"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
 
@@ -121,26 +117,17 @@ def test_wallet_information():
 
     # API details
     get_variable()
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_info/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
-    data = {
-        "erase": False,
-        "auth": {
-            "session": f"{global_sid}",
-            "user": f"{global_user_id}",
-            "sid": f"{global_sid}", 
-            "client_secret": f"{global_client_secret}" 
-        }        
-    }
+ 
     print("url:" , url)
     print("header:" , headers)
-    print("POST Data:" , data)
     start_time = time.time()
     for i in range(5):
         # Make the POST requests
-        response = requests.get(url, json=data, headers=headers)
+        response = requests.get(url,  headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
 
@@ -168,20 +155,17 @@ def test_wallet_records():
 
     # API details
     get_variable()
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/records"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
-    data = {
-
-    }
     print("url:" , url)
     print("header:" , headers)
-    print("POST Data:" , data)
+    print("POST Data:" )
     start_time = time.time()
     for i in range(5):
         # Make the POST requests
-        response = requests.get(url, json=data, headers=headers)
+        response = requests.get(url, headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
 
@@ -198,18 +182,51 @@ def test_wallet_records():
     # Assuming the response body is in JSON format
     response_data = response.json()
     print("Response Data :" , response_data)
-
     assert "total" in response_data, "Response does not contain 'total'"
     assert "current_page" in response_data, "Response does not contain 'current_page'"
     assert response_data["per_page"] == 20, "Response does not equal 20"
     assert "data" in response_data, "Response does not contain 'data'"
+    global global_wallet_record_id
+    #從
+    global_wallet_record_id = response_data.get("data", [])[0]["wallet_record_id"]
 
 @pytest.mark.run(order=7)
+def test_wallet_single_records():
+
+    # API details
+    get_variable()
+    env = "uat"
+    url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/records/{global_wallet_record_id}/"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" )
+    start_time = time.time()
+    for i in range(5):
+        # Make the POST requests
+        response = requests.get(url, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+    
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    assert "wallet_record_id" in response_data, "Response does not contain 'wallet_recoed_id'"
+    assert "bill_no" in response_data, "Response does not contain 'bill_no'"
+    assert "create_at" in response_data, "Response does not contain 'create_at'"
+    assert "tran_amount" in response_data, "Response does not contain 'tran_amount'"
+    assert "balance_amount" in response_data, "Response does not contain 'balance_amount'"
+
+@pytest.mark.run(order=8)
 def test_wallet_address():
 
     # API details
     get_variable()
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
@@ -246,12 +263,12 @@ def test_wallet_address():
 
     assert "shortcut_wallet_id" in response_data, "Response does not contain 'shortcut_wallet_id'"
 
-@pytest.mark.run(order=8)
+@pytest.mark.run(order=9)
 def test_wallet_address_change():
 
     # API details
     get_variable()
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address/{global_wallet_address}/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
@@ -286,12 +303,12 @@ def test_wallet_address_change():
 
     assert response_data["msg"] == 1, "Response does not contain 'msg'"
 
-@pytest.mark.run(order=9)
+@pytest.mark.run(order=10)
 def test_wallet_address_delete():
 
     # API details
     get_variable()
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_wallet_url(env)}/_matrix/client/r0/wallet/{global_user_id}/wallet_address/{global_wallet_address}/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]

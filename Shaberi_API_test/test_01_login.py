@@ -16,10 +16,10 @@ from setting import send_email, generate_device_id
 
 
 country_code = "TW"
-phone_number = f"09{random.randint(10000000, 99999999)}"
-# phone_number = "0975915790"
+# phone_number = f"09{random.randint(10000000, 99999999)}"
 # phone_number = "0909317920"
-# phone_number = "0909317921"
+# phone_number = "0975915790"
+phone_number = "0975916010"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
@@ -29,7 +29,7 @@ global_user_id = None
 def test_register_msisdn():
 
     # API details
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_url(env)}/_matrix/client/r0/register/msisdn/requestCode"
     headers = {"Content-Type": "application/json"}
 
@@ -79,7 +79,7 @@ def write_to_csv():
 @pytest.mark.run(order=2)
 def test_login():
     # API details
-    env = "stg"
+    env = "uat"
     url = f"{get_environment_url(env)}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
