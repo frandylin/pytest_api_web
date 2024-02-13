@@ -15,12 +15,9 @@ from setting import send_email, ReadCSV
 def get_variable():
     reader_csv = ReadCSV()
     reader_csv.read_csv()
-    token = reader_csv.token
-    user_id = reader_csv.user_id
-    wallet_password = reader_csv.wallet_password
     global global_token, global_user_id
-    global_token = token
-    global_user_id = user_id 
+    global_token = reader_csv.token
+    global_user_id = reader_csv.user_id 
 
 global_token = None
 global_user_id = None 

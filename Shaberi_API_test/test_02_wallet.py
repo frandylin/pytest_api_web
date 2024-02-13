@@ -17,16 +17,12 @@ from setting import send_email, ReadCSV
 def get_variable():
     reader_csv = ReadCSV()
     reader_csv.read_csv()
-    token = reader_csv.token
-    user_id = reader_csv.user_id
-    sid = reader_csv.sid
-    client_secret = reader_csv.client_secret
     global global_token, global_user_id, global_sid, global_client_secret
-    global_token = token
-    global_user_id = user_id 
-    global_sid = sid
-    global_client_secret = client_secret
-    global_wallet_record_id
+    global_token = reader_csv.token
+    global_user_id = reader_csv.user_id
+    global_sid = reader_csv.sid
+    global_client_secret = reader_csv.client_secret
+
 
 global_token = None
 global_user_id = None 
@@ -187,7 +183,6 @@ def test_wallet_records():
     assert response_data["per_page"] == 20, "Response does not equal 20"
     assert "data" in response_data, "Response does not contain 'data'"
     global global_wallet_record_id
-    #從
     global_wallet_record_id = response_data.get("data", [])[0]["wallet_record_id"]
 
 @pytest.mark.run(order=7)
