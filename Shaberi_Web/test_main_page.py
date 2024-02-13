@@ -77,7 +77,7 @@ def switch_to_main_window(browser):
 @pytest.mark.run(order=3)
 def test_download_links(browser):
     wait = WebDriverWait(browser, 10)
-        # Apple Store
+    # Apple Store
     apple_store = browser.find_element(By.XPATH, '//*[@id="__layout"]/div/main/section[1]/div/div[1]/div/div[1]/div/a[1]')
     apple_store.click()
     wait_until_new_window(browser)
