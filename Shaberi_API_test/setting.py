@@ -3,6 +3,8 @@ from email.mime.text import MIMEText
 from datetime import datetime
 import csv
 import uuid
+import time
+import requests
 
 
 def generate_device_id():
@@ -87,6 +89,26 @@ class ReadCSV:
                     self.client_secret = row[1]
                 elif row[0] == "wallet_password":
                     self.wallet_password = row[1]
+
+# global_token = "syt_djhqN3Mybjh5YWd1_FRACHIpNMzXoBGRzWsrN_0quZSK"
+# message = "fuck"
+def send_shaberi_message(global_token, message):
+    current_time = int(time.time())
+    # API details
+    env = "uat"
+    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/!183481292480:shaberi.com/send/m.room.message/m{current_time}"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    data = {
+        "msgtype": "m.text",
+        "body": message
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    # Make the POST requests
+    response = requests.put(url, json=data, headers=headers)
+    response_data = response.json()
+    print("Response Data :" , response_data)
 
 # def read_csv():
 #     token, user_id, sid, client_secret, wallet_password = None, None, None, None, None

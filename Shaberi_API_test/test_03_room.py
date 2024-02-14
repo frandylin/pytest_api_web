@@ -11,7 +11,7 @@ import smtplib, ssl
 from datetime import datetime
 from setting import get_environment_url
 import hashlib
-from setting import send_email, ReadCSV
+from setting import send_email, ReadCSV, send_shaberi_message
 
 #get variable
 def get_variable():
@@ -115,6 +115,8 @@ def test_send_packet():
     for i in range(1):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
+        #測試串接 Shaberi 發 test failed message
+        # send_shaberi_message(global_token, "receive red packet test failed please fix it.")
     end_time = time.time()
     diff_time = end_time - start_time
 
@@ -160,12 +162,12 @@ def test_receive_packet():
     end_time = time.time()
     diff_time = end_time - start_time
 
-    # #testing loading time
-    # if diff_time > 5 or response.status_code != 200:
-    #     send_email("[Room]", "send red packet test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
-    # else:
-    #     print("Loading test passed. ")
-
+    #testing loading time
+    if diff_time > 5 or response.status_code != 200:
+        # send_email("[Room]", "send red packet test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_shaberi_message(global_token, "receive red packet test failed please fix it.")
+    else:
+        print("Loading test passed. ")
     # Validate the response
     response_data = response.json()
     print("Response Data :" , response_data)
