@@ -7,6 +7,7 @@ import time
 import requests
 
 
+
 def generate_device_id():
     # 生成 UUID
     device_id = uuid.uuid4()
@@ -37,34 +38,28 @@ def send_email(subject_prefix, body, sender, recipients, password):
 
 
 #env
-urls = {
-    "prod": "https://api.imser5yw.com",
-    "uat": "https://im-uat.imdevs.net",
-    "stg": "https://im-stg.imdevs.net",
-    "dev": "https://im-dev.imdevs.net",
-}
-
-def get_environment_url(env):
-    if env == "prod":
-        return urls["prod"]
-    elif env == "uat":
-        return urls["uat"]
-    elif env == "stg":
-        return urls["stg"]
-    elif env == "dev":
-        return urls["dev"]
-
-#only for wallet urls
-def get_environment_wallet_url(env):
-    if env == "prod":
-        return "https://svzyyges3qk6b6s62v88qts.letsgomars.com"
-    elif env == "uat":
-        return "https://im-uat-aaj7xg4ds.imdevs.net"
-    elif env == "stg":
-        return "https://im-stg-pzx.imdevs.net"
-    elif env == "dev":
-        return "https://im-dev-pzx.imdevs.net"
-
+class Enviroment:
+    def __init__(self):
+        self.env = "uat"
+        self.urls = {
+            "prod": "https://api.imser5yw.com",
+            "uat": "https://im-uat.imdevs.net",
+            "stg": "https://im-stg.imdevs.net",
+            "dev": "https://im-dev.imdevs.net",
+        }
+        self.wallet_urls = {
+            "prod": "https://svzyyges3qk6b6s62v88qts.letsgomars.com",
+            "uat": "https://im-uat-aaj7xg4ds.imdevs.net",
+            "stg": "https://im-stg-pzx.imdevs.net",
+            "dev": "https://im-dev-pzx.imdevs.net",
+        }
+        
+    def get_base_url(self):
+        return self.urls.get(self.env)
+    
+    def get_wallet_url(self):
+        return self.wallet_urls.get(self.env)
+    
 class ReadCSV:
     def __init__(self):
         # 初始化类的属性
@@ -90,13 +85,11 @@ class ReadCSV:
                 elif row[0] == "wallet_password":
                     self.wallet_password = row[1]
 
-# global_token = "syt_djhqN3Mybjh5YWd1_FRACHIpNMzXoBGRzWsrN_0quZSK"
-# message = "fuck"
 def send_shaberi_message(global_token, message):
+    get_environment_url = Enviroment().get_base_url
     current_time = int(time.time())
     # API details
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/!183481292480:shaberi.com/send/m.room.message/m{current_time}"
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/!183481292480:shaberi.com/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
         "msgtype": "m.text",
@@ -110,17 +103,3 @@ def send_shaberi_message(global_token, message):
     response_data = response.json()
     print("Response Data :" , response_data)
 
-# def read_csv():
-#     token, user_id, sid, client_secret, wallet_password = None, None, None, None, None
-#     with open("token.csv", "r") as csvfile:
-#         reader = csv.reader(csvfile)
-#         for row in reader:
-#             if row[0] == "token":
-#                 token = row[1]
-#             elif row[0] == "user_id":
-#                 user_id = row[1]
-#             elif row[0] == "sid":
-#                 sid = row[1]
-#             elif row[0] == "client_secret":
-#                 client_secret = row[1]
-#     return token, user_id, sid, client_secret 

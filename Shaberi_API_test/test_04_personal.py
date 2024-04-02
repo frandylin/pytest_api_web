@@ -2,14 +2,7 @@ import requests
 import pytest
 import time
 import os
-import base64
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import smtplib, ssl
-from datetime import datetime
-from setting import get_environment_url
-from setting import send_email, ReadCSV
+from setting import send_email, ReadCSV, Enviroment
 
 #get variable
 def get_variable():
@@ -18,17 +11,19 @@ def get_variable():
     global global_token, global_user_id
     global_token = reader_csv.token
     global_user_id = reader_csv.user_id 
-
 global_token = None
-global_user_id = None 
+global_user_id = None
+ 
+get_environment_url = Enviroment().get_base_url()
+env = Enviroment().env
 
 @pytest.mark.run(order=19)
 def test_revise_displayname():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/profile/{global_user_id}/displayname"
+    
+    url = f"{get_environment_url}/_matrix/client/r0/profile/{global_user_id}/displayname"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
@@ -62,8 +57,8 @@ def test_change_avatar():
     image = os.path.join(image_folder, "pepe.jpeg")
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/profile/{global_user_id}/avatar_url"
+    
+    url = f"{get_environment_url}/_matrix/client/r0/profile/{global_user_id}/avatar_url"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     with open(image, "rb") as image_file:
@@ -86,8 +81,8 @@ def test_search_profile():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/profile/{global_user_id}"
+    
+    url = f"{get_environment_url}/_matrix/client/r0/profile/{global_user_id}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     print("url:" , url)

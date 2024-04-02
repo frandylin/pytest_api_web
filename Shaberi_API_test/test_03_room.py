@@ -1,17 +1,8 @@
 import requests
 import pytest
-import uuid
-import random
-import csv
 import time
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import smtplib, ssl
-from datetime import datetime
-from setting import get_environment_url
 import hashlib
-from setting import send_email, ReadCSV, send_shaberi_message
+from setting import send_email, ReadCSV, send_shaberi_message, Enviroment
 
 #get variable
 def get_variable():
@@ -21,20 +12,21 @@ def get_variable():
     global_token = reader_csv.token
     global_user_id = reader_csv.user_id 
     global_wallet_password = reader_csv.wallet_password
-
 global_token = None
 global_user_id = None 
 global_wallet_password = None
 global_room_id = None
 global_red_packet_id = None
 
+get_environment_url = Enviroment().get_base_url()
+env = Enviroment().env
+
 @pytest.mark.run(order=11)
 def test_create_room():
     
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/createRoom"
+    url = f"{get_environment_url}/_matrix/client/r0/createRoom"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
@@ -85,8 +77,7 @@ def test_send_packet():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet"
+    url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     total_amount = "0.010"
@@ -112,7 +103,7 @@ def test_send_packet():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(1):
+    for i in range(3):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
         #測試串接 Shaberi 發 test failed message
@@ -144,8 +135,7 @@ def test_receive_packet():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
+    url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
 
@@ -179,20 +169,20 @@ def test_receive_packet():
     assert "tran_amount" in response_data, "Response does not contain 'tran_amount'"
     assert "remain" in response_data, "Response does not contain 'remain'"
     assert "claim_count" in response_data, "Response does not contain 'claim_count'"
+    
 
 @pytest.mark.run(order=14)
 def test_packet_record():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}"
+    url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
 
     print("url:" , url)
     print("header:" , headers)
     start_time = time.time()
-    for i in range(1):
+    for i in range(2):
         # Make the POST requests
         response = requests.get(url, headers=headers)
     end_time = time.time()
@@ -227,8 +217,7 @@ def test_send_message():
     current_time = int(time.time())
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/send/m.room.message/m{current_time}"
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
@@ -264,8 +253,7 @@ def test_revise_room_name():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/state/m.room.name/"
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/state/m.room.name/"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
         "name": "frandy api test"
@@ -289,8 +277,7 @@ def test_serch_room_members():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/joined_members"
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/joined_members"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
     }
@@ -313,8 +300,7 @@ def test_leave_room():
 
     # API details
     get_variable()
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/rooms/{global_room_id}/leave"
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/leave"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {

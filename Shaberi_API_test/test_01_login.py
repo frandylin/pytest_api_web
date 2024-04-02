@@ -3,7 +3,6 @@ import pytest
 import uuid
 import random
 import csv
-from setting import get_environment_url
 import time
 import smtplib
 from email.mime.text import MIMEText
@@ -11,26 +10,27 @@ from email.mime.multipart import MIMEMultipart
 import smtplib, ssl
 from datetime import datetime
 import hashlib
-from setting import send_email, generate_device_id
+from setting import send_email, generate_device_id, Enviroment
 
 
 
 country_code = "TW"
 # phone_number = f"09{random.randint(10000000, 99999999)}"
-# phone_number = "0909317920"
+phone_number = "0909317920"
 # phone_number = "0975915790"
-phone_number = "0975916010"
+# phone_number = "0975916010"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
 global_user_id = None
+get_environment_url = Enviroment().get_base_url()
+env = Enviroment().env
 
 @pytest.mark.run(order=1)
 def test_register_msisdn():
 
     # API details
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/register/msisdn/requestCode"
+    url = f"{get_environment_url}/_matrix/client/r0/register/msisdn/requestCode"
     headers = {"Content-Type": "application/json"}
 
     # Request data
@@ -79,8 +79,7 @@ def write_to_csv():
 @pytest.mark.run(order=2)
 def test_login():
     # API details
-    env = "uat"
-    url = f"{get_environment_url(env)}/_matrix/client/r0/login/msisdnlogin"
+    url = f"{get_environment_url}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
     recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
