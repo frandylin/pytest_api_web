@@ -15,11 +15,6 @@ def generate_device_id():
     hex_string = str(device_id).replace('-', '')
     return hex_string[:32]
 
-#send email
-body = "wallet config test failed please fix it."
-sender = "frandyfancy@gmail.com"
-recipients = "genman@twim.cc"
-password = "xjbtujjvqkywrslh"
 
 def send_email(subject_prefix, body, sender, recipients, password):
     current_time = datetime.now()

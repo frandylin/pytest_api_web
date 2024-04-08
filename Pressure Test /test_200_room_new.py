@@ -9,11 +9,11 @@ import random
 from decimal import Decimal, ROUND_HALF_UP
 
 token_table = {}
-env = "stg"
-room_id = "!995433889696:shaberi.com"
+env = "uat"
+room_id = "!550506616256:shaberi.com"
 current_time = int(time.time())
 total_tran_amount = Decimal('0')
-# for i in range(1, 2):
+# for i in range(1, 100):
 #     #請求驗證碼
 #     phone_number = f"09{random.randint(10000000, 99999999)}"
 #     print(f"[{phone_number}] 驗證碼")
@@ -82,17 +82,17 @@ total_tran_amount = Decimal('0')
 #     }
 #     response = requests.put(url, json=data, headers=headers)
 
-# #读取 user.json 文件的现有数据，如果文件不存在则创建一个空字典
-# try:
-#     with open("user.json", "r") as infile:
-#         existing_data = json.load(infile)
-# except FileNotFoundError:
-#     existing_data = {}
-#     # 将新数据合并到现有数据中
-# existing_data.update(token_table)
-##將資料寫入檔案
-# with open("user.json", "w") as outfile:
-#     outfile.write(json.dumps(existing_data))
+#读取 user.json 文件的现有数据，如果文件不存在则创建一个空字典
+try:
+    with open("user.json", "r") as infile:
+        existing_data = json.load(infile)
+except FileNotFoundError:
+    existing_data = {}
+    # 将新数据合并到现有数据中
+existing_data.update(token_table)
+#將資料寫入檔案
+with open("user.json", "w") as outfile:
+    outfile.write(json.dumps(existing_data))
 
 
 token_table = {}
@@ -132,8 +132,8 @@ with open("user.json", "r") as infile:
 #         "wallet_password": f"{wallet_password}"
 #     }
 #     response = requests.post(url, json=data, headers=headers)
-#     response_data = response.json()
-#     print("Response Data :" , response_data)
+    # response_data = response.json()
+    # print("Response Data :" , response_data)
         
 for i in range(1,10):
     #打字
@@ -182,11 +182,11 @@ for i in range(1,10):
         response = requests.post(url, json=data, headers=headers)
 
         # Validate the response
-        response_data = response.json()
-        print("Response Data :" , response_data)
-        red_packet_id = response_data.get("red_packet_id")
-        expire_at = response_data.get("expire_at")
-        return red_packet_id
+        # response_data = response.json()
+        # print("Response Data :" , response_data)
+        # red_packet_id = response_data.get("red_packet_id")
+        # expire_at = response_data.get("expire_at")
+        # return red_packet_id
 
     red_packet_id = send_packet()
     # red_packet_id = "7fcb7871-d6dd-4c1c-ae7c-c0929b8fb733"
@@ -203,19 +203,19 @@ for i in range(1,10):
         response = requests.post(url, json=data, headers=headers)
         response_data = response.json()
         print("Response Data :" , response_data)
-        if "error" in response_data and response_data["error"] == "red packet is over":
-            print("紅包已領完，結束循環")
-            break
-        #如有成功領到紅包才會加總
-        if "remain" not in response_data:
-            continue
-        remain = response_data.get("remain")
-        #傳送系統訊息
-        print(f"[{phone_number}] 領紅包訊息")
-        tran_amount = Decimal(str(response_data.get("tran_amount")))
-        #將每筆領取金額加總
-        total_tran_amount += tran_amount
-    print("Compare Total Tran Amount:", total_tran_amount)    
+    #     if "error" in response_data and response_data["error"] == "red packet is over":
+    #         print("紅包已領完，結束循環")
+    #         break
+    #     #如有成功領到紅包才會加總
+    #     if "remain" not in response_data:
+    #         continue
+    #     remain = response_data.get("remain")
+    #     #傳送系統訊息
+    #     print(f"[{phone_number}] 領紅包訊息")
+    #     tran_amount = Decimal(str(response_data.get("tran_amount")))
+    #     #將每筆領取金額加總
+    #     total_tran_amount += tran_amount
+    # print("Compare Total Tran Amount:", total_tran_amount)    
 
 
 
