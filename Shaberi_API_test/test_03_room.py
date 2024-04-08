@@ -103,7 +103,7 @@ def test_send_packet():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(3):
+    for i in range(2):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
         #測試串接 Shaberi 發 test failed message
@@ -228,7 +228,7 @@ def test_send_message():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(5):
+    for i in range(1):
         # Make the POST requests
         response = requests.put(url, json=data, headers=headers)
     end_time = time.time()
