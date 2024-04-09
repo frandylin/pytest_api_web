@@ -1,5 +1,0 @@
-Testing macOS download URL
-等待時間 0
-找到的檔案有 Unconfirmed 698443.crdownload
-[PASS]
-macos_url: crdownload
