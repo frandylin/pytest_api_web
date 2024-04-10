@@ -10,10 +10,12 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
 
 @pytest.fixture(scope='session')
 def browser():
-    download_directory = os.path.expanduser('~/Downloads/unit_test_folder')
+    download_directory = os.path.expanduser('unit_test_folder')
     chrome_options = Options()
     chrome_options.add_experimental_option('prefs', {
         'download.default_directory': download_directory,
@@ -22,8 +24,11 @@ def browser():
         'safebrowsing.enabled': False,
         'safebrowsing.disable_download_protection': True,
     })
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.maximize_window()
+    # driver = webdriver.Chrome(options=chrome_options)
+    #Jenkins need running on Remote webdriver
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Remote(command_executor='http://localhost:4444/wd/hub', options=options)
+    # driver.maximize_window()
     ### 初始化 ###
     # [建立]測試資料
     os.makedirs(download_directory)
@@ -65,6 +70,7 @@ def test_language_switch(browser):
         assert expected_url_part in browser.current_url
 
 def wait_until_new_window(browser):
+
     wait = WebDriverWait(browser, 10)
     wait.until(lambda browser: len(browser.window_handles) > 1)
 
@@ -112,7 +118,7 @@ def test_download_links(browser):
 @pytest.mark.run(order=4)
 def test_apk_download(browser):
     print("Testing Android APK download URL")
-    download_directory = os.path.expanduser('~/Downloads/unit_test_folder')
+    download_directory = os.path.expanduser('unit_test_folder')
     apk_bt = browser.find_element(By.XPATH, '//*[@id="__layout"]/div/main/section[1]/div/div[1]/div/div[2]/div/a[2]')
     apk_bt.click()
     apk_url = apk_bt.get_attribute("href").split("/")[-1]
@@ -150,7 +156,7 @@ def test_apk_download(browser):
 @pytest.mark.run(order=5)
 def test_macos_download(browser):
     print("Testing macOS download URL")
-    download_directory = os.path.expanduser('~/Downloads/unit_test_folder')
+    download_directory = os.path.expanduser('unit_test_folder')
     macos_bt = browser.find_element(By.XPATH, '//*[@id="__layout"]/div/main/section[1]/div/div[1]/div/div[3]/div/a[1]')
     macos_bt.click()
     time.sleep(1)
@@ -189,7 +195,7 @@ def test_macos_download(browser):
 @pytest.mark.run(order=6)
 def test_windows_download(browser):
     print("Testing Windows download URL")
-    download_directory = os.path.expanduser('~/Downloads/unit_test_folder')
+    download_directory = os.path.expanduser('unit_test_folder')
     windows_bt = browser.find_element(By.XPATH, '//*[@id="__layout"]/div/main/section[1]/div/div[1]/div/div[3]/div/a[2]')
     windows_bt.click()
     windows_url = windows_bt.get_attribute("href").split("/")[-1]
