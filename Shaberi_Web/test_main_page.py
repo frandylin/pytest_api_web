@@ -27,7 +27,7 @@ def browser():
     # driver = webdriver.Chrome(options=chrome_options)
     #Jenkins need running on Remote webdriver
     options = webdriver.ChromeOptions()
-    driver = webdriver.Remote(command_executor='http://localhost:4444/wd/hub', options=options)
+    driver = webdriver.Remote(command_executor='http://confident_ritchie:4444/wd/hub', options=options)
     # driver.maximize_window()
     ### 初始化 ###
     # [建立]測試資料
