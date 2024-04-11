@@ -21,7 +21,7 @@ global_red_packet_id = None
 get_environment_url = Enviroment().get_base_url()
 env = Enviroment().env
 
-@pytest.mark.run(order=11)
+@pytest.mark.run(order=12)
 def test_create_room():
     
     # API details
@@ -71,7 +71,7 @@ def test_create_room():
     global global_room_id
     global_room_id = response_data.get("room_id")
 
-@pytest.mark.run(order=12)
+@pytest.mark.run(order=13)
 def test_send_packet():
     if env == "prod":
         pytest.skip("Test skipped because environment is not uat or stg")
@@ -130,7 +130,7 @@ def test_send_packet():
     global global_red_packet_id
     global_red_packet_id = response_data.get("red_packet_id")
 
-@pytest.mark.run(order=13)
+@pytest.mark.run(order=14)
 def test_receive_packet():
     if env == "prod":
         pytest.skip("Test skipped because environment is not uat or stg")
