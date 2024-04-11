@@ -16,12 +16,14 @@ def generate_device_id():
     return hex_string[:32]
 
 
-def send_email(subject_prefix, body, sender, recipients, password):
+def send_email(subject_prefix, body):
     current_time = datetime.now()
     formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
     #subject_prefix 由 Login , Wallet 帶入prefix 
     subject = f"{subject_prefix} Test failed  {formatted_time}"
-
+    recipients = ["genman@twim.cc", "frandyfancy@gmail.com"]
+    sender = "frandyfancy@gmail.com"
+    password = "mwwdsbtomalgcmbh"
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = sender
@@ -48,6 +50,13 @@ class Enviroment:
             "stg": "https://im-stg-pzx.imdevs.net",
             "dev": "https://im-dev-pzx.imdevs.net",
         }
+
+        self.phone_number = {
+            "prod": "0975915731",
+            "uat": "0975916010",
+            "stg": "0975916010",
+            "dev": "0909317920"
+        }
         
     def get_base_url(self):
         return self.urls.get(self.env)
@@ -55,6 +64,9 @@ class Enviroment:
     def get_wallet_url(self):
         return self.wallet_urls.get(self.env)
     
+    def get_phone_number(self):
+        return self.phone_number.get(self.env)
+
 class ReadCSV:
     def __init__(self):
         # 初始化类的属性

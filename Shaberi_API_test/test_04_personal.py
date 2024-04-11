@@ -25,7 +25,6 @@ def test_revise_displayname():
     
     url = f"{get_environment_url}/_matrix/client/r0/profile/{global_user_id}/displayname"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
         "displayname": "testfrandy",
     }   
@@ -39,7 +38,7 @@ def test_revise_displayname():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email(f"[{env}][Personal]", "revise displayname test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Personal]", "revise displayname test failed please fix it.")
     else:
         print("send message test passed. ")
 
@@ -60,7 +59,6 @@ def test_change_avatar():
     
     url = f"{get_environment_url}/_matrix/client/r0/profile/{global_user_id}/avatar_url"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     with open(image, "rb") as image_file:
         data = {
             "avatar_url": image
@@ -84,7 +82,6 @@ def test_search_profile():
     
     url = f"{get_environment_url}/_matrix/client/r0/profile/{global_user_id}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     print("url:" , url)
     print("header:" , headers)
     start_time = time.time()
@@ -94,7 +91,7 @@ def test_search_profile():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email(f"[{env}][Personal]", "search profile test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Personal]", "search profile test failed please fix it.")
     else:
         print("send message test passed. ")
 

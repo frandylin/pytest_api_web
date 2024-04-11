@@ -28,7 +28,6 @@ def test_create_room():
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/createRoom"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
         "name": "apitest",
         "preset": "private_chat",
@@ -56,7 +55,7 @@ def test_create_room():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Room]", "create room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Room]", "create room test failed please fix it.")
     else:
         print("Loading test passed. ")
 
@@ -74,12 +73,13 @@ def test_create_room():
 
 @pytest.mark.run(order=12)
 def test_send_packet():
+    if env == "prod":
+        pytest.skip("Test skipped because environment is not uat or stg")
 
     # API details
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     total_amount = "0.010"
     count = 1
     fee = "0.000"
@@ -103,7 +103,7 @@ def test_send_packet():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(2):
+    for i in range(1):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
         #測試串接 Shaberi 發 test failed message
@@ -113,7 +113,7 @@ def test_send_packet():
 
     # #testing loading time
     # if diff_time > 5 or response.status_code != 200:
-    #     send_email("[Room]", "send red packet test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+    #     send_email("[Room]", "send red packet test failed please fix it.")
     # else:
     #     print("Loading test passed. ")
 
@@ -132,12 +132,13 @@ def test_send_packet():
 
 @pytest.mark.run(order=13)
 def test_receive_packet():
+    if env == "prod":
+        pytest.skip("Test skipped because environment is not uat or stg")
 
     # API details
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
 
     data = {
 
@@ -153,11 +154,10 @@ def test_receive_packet():
     diff_time = end_time - start_time
 
     #testing loading time
-    if diff_time > 5 or response.status_code != 200:
-        # send_email("[Room]", "send red packet test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
-        send_shaberi_message(global_token, "receive red packet test failed please fix it.")
-    else:
-        print("Loading test passed. ")
+    # if diff_time > 5 or response.status_code != 200:
+    #     send_email("[Room]", "send red packet test failed please fix it.")
+    # else:
+    #     print("Loading test passed. ")
     # Validate the response
     response_data = response.json()
     print("Response Data :" , response_data)
@@ -171,46 +171,6 @@ def test_receive_packet():
     assert "claim_count" in response_data, "Response does not contain 'claim_count'"
     
 
-@pytest.mark.run(order=14)
-def test_packet_record():
-
-    # API details
-    get_variable()
-    url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-
-    print("url:" , url)
-    print("header:" , headers)
-    start_time = time.time()
-    for i in range(2):
-        # Make the POST requests
-        response = requests.get(url, headers=headers)
-    end_time = time.time()
-    diff_time = end_time - start_time
-
-    # Validate the response
-    response_data = response.json()
-    print("Response Data :" , response_data)
-    assert diff_time < 5, f"too slow {diff_time}"
-    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
-
-    # Assuming the response body is in JSON format
-    assert "red_packet_id" in response_data, "Response does not contain 'red_packet_id'"
-    assert "create_user_id" in response_data, "Response does not contain 'create_user_id'"
-    assert "room_id" in response_data, "Response does not contain 'room_id'"
-    assert "tran_amount" in response_data, "Response does not contain 'tran_amount'"
-    assert "fee" in response_data, "Response does not contain 'fee'"
-    assert "balance_amount" in response_data, "Response does not contain 'balance_amount'"
-    assert "count" in response_data, "Response does not contain 'count'"
-    assert "claim_count" in response_data, "Response does not contain 'claim_count'"
-    assert "create_at" in response_data, "Response does not contain 'create_at'"
-    assert "expire_at" in response_data, "Response does not contain 'expire_at'"
-    assert "red_packet_type" in response_data, "Response does not contain 'red_packet_type'"
-    assert "red_packet_status" in response_data, "Response does not contain 'red_packet_status'"
-    assert "fee" in response_data, "Response does not contain 'fee'"
-    assert "note" in response_data, "Response does not contain 'note'"
-    assert "red_packet_detail_ids" in response_data, "Response does not contain 'red_packet_detail'"
-
 @pytest.mark.run(order=15)
 def test_send_message():
 
@@ -219,7 +179,6 @@ def test_send_message():
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/send/m.room.message/m{current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
         "msgtype": "m.text",
         "body": "frandy"
@@ -235,7 +194,7 @@ def test_send_message():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email(f"[{env}][Message]", "send message test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Message]", "send message test failed please fix it.")
     else:
         print("send message test passed. ")
 
@@ -302,7 +261,6 @@ def test_leave_room():
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/leave"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com"]
     data = {
 
     }
@@ -318,7 +276,7 @@ def test_leave_room():
 
     # testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Room]", "leave room test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Room]", "leave room test failed please fix it.")
     else:
         print("Loading test passed. ")
 

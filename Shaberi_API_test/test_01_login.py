@@ -16,14 +16,12 @@ from setting import send_email, generate_device_id, Enviroment
 
 country_code = "TW"
 # phone_number = f"09{random.randint(10000000, 99999999)}"
-phone_number = "0909317920"
-# phone_number = "0975915790"
-# phone_number = "0975916010"
 secret = str(uuid.uuid4())  # Replace with your actual client secret
 global_sid = None
 global_token = None
 global_user_id = None
 get_environment_url = Enviroment().get_base_url()
+phone_number = Enviroment().get_phone_number()
 env = Enviroment().env
 
 @pytest.mark.run(order=1)
