@@ -110,3 +110,12 @@ def send_shaberi_message(global_token, message):
     response_data = response.json()
     print("Response Data :" , response_data)
 
+def send_signal_message(message):
+
+    # API details
+    url = f"https://signal.callmebot.com/signal/send.php?phone=04f47b04-894a-44d8-b6d5-e8fad5264015&apikey=992318&text={message}"
+    print("url:" , url)
+    # Make the POST requests
+    response = requests.post(url)
+
+
