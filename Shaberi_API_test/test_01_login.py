@@ -1,15 +1,8 @@
 import requests
 import pytest
 import uuid
-import random
 import csv
 import time
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import smtplib, ssl
-from datetime import datetime
-import hashlib
 from setting import send_email, generate_device_id, Enviroment
 
 
@@ -80,7 +73,6 @@ def test_login():
     url = f"{get_environment_url}/_matrix/client/r0/login/msisdnlogin"
     headers = {"Content-Type": "application/json"}
     device_id = generate_device_id()
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com", "mac@twim.cc"]
 
     data = {
         "session_id": global_sid,
@@ -100,7 +92,7 @@ def test_login():
     diff_time = end_time - start_time
     
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Login]", "login test failed please fix it.", "frandyfancy@gmail.com", recipients_list, "xjbtujjvqkywrslh")
+        send_email(f"[{env}][Login]", "login test failed please fix it.")
     else:
         print("Loading test passed. ")
 

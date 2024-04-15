@@ -21,7 +21,7 @@ def send_email(subject_prefix, body):
     formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
     #subject_prefix 由 Login , Wallet 帶入prefix 
     subject = f"{subject_prefix} Test failed  {formatted_time}"
-    recipients = ["genman@twim.cc", "frandyfancy@gmail.com"]
+    recipients = ["frandyfancy@gmail.com"]
     sender = "frandyfancy@gmail.com"
     password = "mwwdsbtomalgcmbh"
     msg = MIMEText(body)
