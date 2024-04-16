@@ -20,6 +20,7 @@ global_red_packet_id = None
 
 get_environment_url = Enviroment().get_base_url()
 env = Enviroment().env
+current_time = int(time.time())
 
 @pytest.mark.run(order=12)
 def test_create_room():
@@ -111,7 +112,7 @@ def test_send_packet():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_signal_message(f"{env}[Room] send red packet test failed please fix it.")
+        send_signal_message(f"{env}[Room]\nsend red packet test failed please fix it.")
     else:
         print("Loading test passed. ")
 
@@ -153,7 +154,7 @@ def test_receive_packet():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_signal_message(f"{env}[Room] receive red packet test failed please fix it.")
+        send_signal_message(f"{env} [Room]\nreceive red packet test failed please fix it.")
     else:
         print("Loading test passed. ")
     # Validate the response
@@ -172,7 +173,6 @@ def test_receive_packet():
 @pytest.mark.run(order=15)
 def test_send_message():
 
-    current_time = int(time.time())
     # API details
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/send/m.room.message/m{current_time}"
@@ -286,6 +286,43 @@ def test_leave_room():
     response_data = response.json()
     print("Response Data :" , response_data)
 
+
+@pytest.mark.run(order=19)
+def test_announce_message():
+
+    # API details
+    get_variable()
+    url = f"{get_environment_url}/_matrix/client/r0/system/board?update_ts={current_time}"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    data = {
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    start_time = time.time()
+    for i in range(5):
+        # Make the POST requests
+        response = requests.get(url, json=data, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+    #testing loading time
+    if diff_time > 5 or response.status_code != 200:
+        send_signal_message(f"{env} [Room]\nannounce message test failed please fix it.")
+    else:
+        print("Loading test passed. ")
+
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    assert "event_id" in response_data["events"][0], "Response does not contain 'event_id"
+    assert "content" in response_data["events"][0], "Response does not contain 'content"
+    assert "origin_server_ts" in response_data["events"][0], "Response does not contain 'origin_server_ts"
+    assert "type" in response_data["events"][0], "Response does not contain'type"
+    assert "sender" in response_data["events"][0], "Response does not contain'sender"
+    assert "is_show" in response_data["events"][0], "Response does not contain'is_show"
 
 if __name__ == "__main__":
 

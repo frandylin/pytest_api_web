@@ -2,7 +2,7 @@ import requests
 import pytest
 import time
 import os
-from setting import send_email, ReadCSV, Enviroment
+from setting import send_email, ReadCSV, Enviroment, send_signal_message
 
 #get variable
 def get_variable():
@@ -17,7 +17,7 @@ global_user_id = None
 get_environment_url = Enviroment().get_base_url()
 env = Enviroment().env
 
-@pytest.mark.run(order=19)
+@pytest.mark.run(order=20)
 def test_revise_displayname():
 
     # API details
@@ -50,7 +50,7 @@ def test_revise_displayname():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=20)
+@pytest.mark.run(order=21)
 def test_change_avatar():
     image_folder = os.path.join(os.path.dirname(__file__), 'assets')
     image = os.path.join(image_folder, "pepe.jpeg")
@@ -74,7 +74,7 @@ def test_change_avatar():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=21)
+@pytest.mark.run(order=22)
 def test_search_profile():
 
     # API details
@@ -108,6 +108,33 @@ def test_search_profile():
     assert "user_name" in response_data, "Response does not contain 'user_name'"
     assert "phone_number" in response_data, "Response does not contain 'phone_number'"
 
+@pytest.mark.run(order=23)
+def test_logout():
+
+    #API details
+    get_variable()
+    
+    url = f"{get_environment_url}/_matrix/client/r0/logout"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    print("url:" , url)
+    print("header:" , headers)
+    start_time = time.time()
+    # Make the POST requests
+    response = requests.post(url, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+    #testing loading time
+    if diff_time > 5 or response.status_code != 200:
+        send_signal_message(f"{env}[Room]\nsend red packet test failed please fix it.")
+    else:
+        print("send message test passed. ")
+
+    # Validate the response
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
 
 
 if __name__ == "__main__":
