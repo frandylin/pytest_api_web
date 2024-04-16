@@ -104,7 +104,7 @@ def test_send_packet():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(1):
+    for i in range(2):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
     end_time = time.time()
@@ -146,7 +146,7 @@ def test_receive_packet():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(1):
+    for i in range(2):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
     end_time = time.time()
