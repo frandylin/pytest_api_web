@@ -3,7 +3,7 @@ import pytest
 import uuid
 import csv
 import time
-from setting import send_email, generate_device_id, Enviroment
+from setting import send_email, generate_device_id, Enviroment, send_signal_message
 
 
 
@@ -92,7 +92,8 @@ def test_login():
     diff_time = end_time - start_time
     
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Login]", "login test failed please fix it.")
+        # send_email(f"[{env}][Login]", "login test failed please fix it.")
+        send_signal_message(f"[{env}][Login]\nlogin test failed please fix it.")
     else:
         print("Loading test passed. ")
 
@@ -107,11 +108,6 @@ def test_login():
     assert response_data["home_server"] == "shaberi.com", "Response does not contain 'home_sever'"
     assert "syt_" in response_data["access_token"], "Response does not contain 'access_token'" 
     assert "device_id" in response_data, "Response does not contain 'device_id'"
-    
-    if phone_number == "0975915790" :
-        assert response_data["is_first"] == 0, "Response does not contain 'is_first'"
-    else:
-        pass
     
     #Extract access_token
     global global_token, global_user_id

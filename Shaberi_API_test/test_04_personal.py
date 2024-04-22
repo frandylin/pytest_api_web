@@ -38,7 +38,8 @@ def test_revise_displayname():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email(f"[{env}][Personal]", "revise displayname test failed please fix it.")
+        # send_email(f"[{env}][Personal]", "revise displayname test failed please fix it.")
+        send_signal_message(f"[{env}][Personal]\nrevise displayname test failed please fix it.")
     else:
         print("send message test passed. ")
 
@@ -91,7 +92,8 @@ def test_search_profile():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email(f"[{env}][Personal]", "search profile test failed please fix it.")
+        # send_email(f"[{env}][Personal]", "search profile test failed please fix it.")
+        send_signal_message(f"[{env}][Personal]\nsearch profile test failed please fix it.")
     else:
         print("send message test passed. ")
 
@@ -125,7 +127,8 @@ def test_logout():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_signal_message(f"{env}[Room]\nsend red packet test failed please fix it.")
+        # send_signal_message(f"{env}[Room]\nsend red packet test failed please fix it.")
+        send_signal_message(f"[{env}][Personal]\nlogout test failed please fix it.")
     else:
         print("send message test passed. ")
 

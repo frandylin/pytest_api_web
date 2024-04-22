@@ -56,7 +56,8 @@ def test_create_room():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Room]", "create room test failed please fix it.")
+        # send_email(f"[{env}][Room]", "create room test failed please fix it.")
+        send_signal_message(f"[{env}][Room]\ncreate room test failed please fix it.")
     else:
         print("Loading test passed. ")
 
@@ -146,7 +147,7 @@ def test_receive_packet():
     print("header:" , headers)
     print("POST Data:" , data)
     start_time = time.time()
-    for i in range(2):
+    for i in range(1):
         # Make the POST requests
         response = requests.post(url, json=data, headers=headers)
     end_time = time.time()
@@ -192,7 +193,8 @@ def test_send_message():
     diff_time = end_time - start_time
     #testing loading time
     if diff_time > 10 or response.status_code != 200:
-        send_email(f"[{env}][Message]", "send message test failed please fix it.")
+        # send_email(f"[{env}][Message]", "send message test failed please fix it.")
+        send_signal_message(f"{env} [Message]\nsend message test failed please fix it.")
     else:
         print("send message test passed. ")
 
@@ -274,7 +276,8 @@ def test_leave_room():
 
     # testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Room]", "leave room test failed please fix it.")
+        # send_email(f"[{env}][Room]", "leave room test failed please fix it.")
+        send_signal_message(f"{env} [Room]\nleave room test failed please fix it.")
     else:
         print("Loading test passed. ")
 

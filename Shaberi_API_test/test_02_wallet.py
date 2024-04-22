@@ -3,7 +3,7 @@ import pytest
 import csv
 import time
 import hashlib
-from setting import send_email, ReadCSV, Enviroment
+from setting import send_email, ReadCSV, Enviroment, send_signal_message
 
 #get variable
 def get_variable():
@@ -31,7 +31,6 @@ def test_wallet_config():
 
     # API details
     url = f"{get_environment_wallet_url}/_matrix/client/r0/wallet/config"
-    recipients_list = ["genman@twim.cc", "frandyfancy@gmail.com" , "mac@twim.cc"]
 
     print("url:" , url)
     start_time = time.time()
@@ -43,7 +42,8 @@ def test_wallet_config():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Wallet]", "wallet config test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "wallet config test failed please fix it.")
+        send_signal_message(f"{env}[Wallet]\nwallet config test failed please fix it.")
     else:
         print("Loading test passed. ")
     # Validate the response
@@ -119,7 +119,8 @@ def test_wallet_information():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Wallet]", "wallet information test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "wallet information test failed please fix it.")
+        send_signal_message(f"{env}[Wallet]\nwallet information test failed please fix it.")
     else:
         print("Loading test passed. ")
     
@@ -155,7 +156,8 @@ def test_wallet_records():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Wallet]", "wallet records test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "wallet records test failed please fix it.")
+        send_signal_message(f"{env}[Wallet]\nwallet records test failed please fix it.")
     else:
         print("Loading test passed. ")
     
@@ -227,7 +229,8 @@ def test_wallet_address():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 201:
-        send_email(f"[{env}][Wallet]", "wallet address test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "wallet address test failed please fix it.")
+        send_signal_message(f"[{env}][Wallet]\nwallet address test failed please fix it.")
     else:
         print("Loading test passed. ")
     
@@ -267,7 +270,8 @@ def test_wallet_address_change():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 202:
-        send_email(f"[{env}][Wallet]", "wallet address change test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "wallet address change test failed please fix it.")
+        send_signal_message(f"[{env}][Wallet]\nwallet address change test failed please fix it.")
     else:
         print("Loading test passed. ")
     
@@ -304,7 +308,8 @@ def test_wallet_address_delete():
 
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Wallet]", "wallet address delete test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "wallet address delete test failed please fix it.")
+        send_signal_message(f"[{env}][Wallet]\nwallet address delete test failed please fix it.")
     else:
         print("Loading test passed. ")
     
@@ -344,7 +349,8 @@ def test_wallet_password_reset():
     
     #testing loading time
     if diff_time > 5 or response.status_code != 200:
-        send_email(f"[{env}][Wallet]", "reset wallet password test failed please fix it.")
+        # send_email(f"[{env}][Wallet]", "reset wallet password test failed please fix it.")
+        send_signal_message(f"[{env}][Wallet]\nreset wallet password test failed please fix it.")
     else:
         print("Loading test passed. ")
     
