@@ -37,7 +37,7 @@ def send_email(subject_prefix, body):
 #env
 class Enviroment:
     def __init__(self):
-        self.env = "prod"
+        self.env = "uat"
         self.urls = {
             "prod": "https://api.imser5yw.com",
             "uat": "https://im-uat.imdevs.net",
