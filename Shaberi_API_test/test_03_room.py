@@ -19,6 +19,7 @@ global_room_id = None
 global_red_packet_id = None
 
 get_environment_url = Enviroment().get_base_url()
+get_environment_wallet_url = Enviroment().get_wallet_url()
 env = Enviroment().env
 current_time = int(time.time())
 
@@ -80,7 +81,7 @@ def test_send_packet():
 
     # API details
     get_variable()
-    url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet"
+    url = f"{get_environment_wallet_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     total_amount = "0.010"
     count = 1
@@ -137,7 +138,7 @@ def test_receive_packet():
 
     # API details
     get_variable()
-    url = f"{get_environment_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
+    url = f"{get_environment_wallet_url}/_matrix/client/r0/wallet/{global_user_id}/rooms/{global_room_id}/red_packet/{global_red_packet_id}/claim"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
 
     data = {
@@ -255,6 +256,52 @@ def test_serch_room_members():
     assert "joined" in response_data, "Response does not contain 'event_id'"
 
 @pytest.mark.run(order=18)
+def test_typing_on():
+
+    #API details
+    get_variable()
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/typing/{global_user_id}"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    data = {
+        "typing": False
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    #Make the POST requests
+    response = requests.put(url, json=data, headers=headers)
+    
+    # Validate the response
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+
+@pytest.mark.run(order=19)
+def test_typing_off():
+
+    #API details
+    get_variable()
+    url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/typing/{global_user_id}"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    data = {
+        "typing": True
+    }
+    print("url:" , url)
+    print("header:" , headers)
+    print("POST Data:" , data)
+    #Make the POST requests
+    response = requests.put(url, json=data, headers=headers)
+    
+    # Validate the response
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+    
+    # Assuming the response body is in JSON format
+    response_data = response.json()
+    print("Response Data :" , response_data)
+
+@pytest.mark.run(order=20)
 def test_leave_room():
 
     # API details
@@ -290,7 +337,7 @@ def test_leave_room():
     print("Response Data :" , response_data)
 
 
-@pytest.mark.run(order=19)
+@pytest.mark.run(order=21)
 def test_announce_message():
 
     # API details

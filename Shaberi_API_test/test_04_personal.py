@@ -17,7 +17,7 @@ global_user_id = None
 get_environment_url = Enviroment().get_base_url()
 env = Enviroment().env
 
-@pytest.mark.run(order=20)
+@pytest.mark.run(order=22)
 def test_revise_displayname():
 
     # API details
@@ -51,7 +51,7 @@ def test_revise_displayname():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=21)
+@pytest.mark.run(order=23)
 def test_change_avatar():
     image_folder = os.path.join(os.path.dirname(__file__), 'assets')
     image = os.path.join(image_folder, "pepe.jpeg")
@@ -75,7 +75,7 @@ def test_change_avatar():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=22)
+@pytest.mark.run(order=24)
 def test_search_profile():
 
     # API details
@@ -110,7 +110,9 @@ def test_search_profile():
     assert "user_name" in response_data, "Response does not contain 'user_name'"
     assert "phone_number" in response_data, "Response does not contain 'phone_number'"
 
-@pytest.mark.run(order=23)
+
+
+@pytest.mark.run(order=25)
 def test_logout():
 
     #API details
