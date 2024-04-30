@@ -19,7 +19,8 @@ def generate_device_id():
 #env
 class Enviroment:
     def __init__(self):
-        self.env = os.environ.get('ENVIRONMENT', "uat")
+        # 取得環境變數, if ENVIRONMENT None, 則預設為 uat
+        self.env = os.environ.get('ENVIRONMENT', "uat") 
         self.urls = {
             "prod": "https://api.imser5yw.com",
             "uat": "https://im-uat.imdevs.net",
