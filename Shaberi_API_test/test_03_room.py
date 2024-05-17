@@ -233,20 +233,17 @@ def test_revise_room_name():
     assert "$" in response_data["event_id"], "Response does not contain 'event_id'"
 
 @pytest.mark.run(order=17)
-def test_serch_room_members():
+def test_search_room_members():
 
     # API details
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/joined_members"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    data = {
-    }
     print("url:" , url)
     print("header:" , headers)
-    print("POST Data:" , data)
     # Make the POST requests
-    response = requests.get(url, json=data, headers=headers)
-    
+    response = requests.get(url, headers=headers)
+
     # Validate the response
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
@@ -344,14 +341,12 @@ def test_announce_message():
     get_variable()
     url = f"{get_environment_url}/_matrix/client/r0/system/board?update_ts={current_time}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
-    data = {
-    }
     print("url:" , url)
     print("header:" , headers)
     start_time = time.time()
     for i in range(5):
         # Make the POST requests
-        response = requests.get(url, json=data, headers=headers)
+        response = requests.get(url, headers=headers)
     end_time = time.time()
     diff_time = end_time - start_time
     #testing loading time

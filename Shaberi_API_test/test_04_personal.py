@@ -111,8 +111,43 @@ def test_search_profile():
     assert "phone_number" in response_data, "Response does not contain 'phone_number'"
 
 
-
 @pytest.mark.run(order=25)
+def test_friend_online_status():
+    
+    # API details
+    get_variable()
+
+    url = f"{get_environment_url}/_matrix/client/r0/presence/{global_user_id}/status"
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
+    print("url:", url)
+    print("header:" , headers)
+    start_time = time.time()
+    # Make the POST requests
+    response = requests.get(url, headers=headers)
+    end_time = time.time()
+    diff_time = end_time - start_time
+
+    #testing loading time
+    if diff_time > 5 or response.status_code != 200:
+        send_signal_message(f"{env} [Room]\nsearch friend status test failed please fix it.")
+    else:
+        print("Loading test passed. ")
+
+    # Validate the response
+    response_data = response.json()
+    print("Response Data :" , response_data)
+    assert diff_time < 5, f"too slow {diff_time}"
+    assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
+
+    # Assuming the response body is in JSON format
+    assert "presence" in response_data, "Response does not contain 'presence'"
+    assert "last_active_ago", "Response does not contain 'last active ago'"
+
+
+
+
+
+@pytest.mark.run(order=26)
 def test_logout():
 
     #API details

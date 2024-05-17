@@ -23,7 +23,7 @@ class Enviroment:
         self.env = os.environ.get('ENVIRONMENT', "uat") 
         self.urls = {
             "prod": "https://api.imser5yw.com",
-            "uat": "https://im-uat.imdevs.net",
+            "uat": "http://uat-homews.imdevs.net",
             "stg": "https://im-stg.imdevs.net",
             "dev": "https://im-dev.imdevs.net",
         }
@@ -36,7 +36,7 @@ class Enviroment:
         }
 
         self.phone_number = {
-            "prod": "0975915731",
+            "prod": "0928215519",
             "uat": "0975916010",
             "stg": "0975916010",
             "dev": "0909317920"
