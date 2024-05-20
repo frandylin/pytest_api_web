@@ -211,8 +211,10 @@ def test_send_message():
     #sync
     print("Sync")
     url = f"{get_environment_url}/_matrix/client/r0/sync?filter=1&timeout=0&full_state=true"
-    response = requests.get(url, json=data, headers=headers)
+    response = requests.get(url, headers=headers, timeout=10)
     response_data = response.json()
+    print("Post:", url)
+    print("Response Status :" , response.status_code)
     print("Response Data :" , response_data)
 
 
