@@ -260,7 +260,7 @@ def test_typing_on():
     url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/typing/{global_user_id}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
-        "typing": False
+        "typing": True
     }
     print("url:" , url)
     print("header:" , headers)
@@ -283,7 +283,7 @@ def test_typing_off():
     url = f"{get_environment_url}/_matrix/client/r0/rooms/{global_room_id}/typing/{global_user_id}"
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {global_token}"}
     data = {
-        "typing": True
+        "typing": False
     }
     print("url:" , url)
     print("header:" , headers)
@@ -297,6 +297,7 @@ def test_typing_off():
     # Assuming the response body is in JSON format
     response_data = response.json()
     print("Response Data :" , response_data)
+
 
 @pytest.mark.run(order=20)
 def test_leave_room():
