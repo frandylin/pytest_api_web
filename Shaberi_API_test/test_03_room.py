@@ -208,6 +208,14 @@ def test_send_message():
     print("Response Data :" , response_data)
     assert "$" in response_data["event_id"], "Response does not contain 'event_id'"
 
+    #sync
+    print("Sync")
+    url = f"{get_environment_url}/_matrix/client/r0/sync?filter=1&timeout=0&full_state=true"
+    response = requests.get(url, json=data, headers=headers)
+    response_data = response.json()
+    print("Response Data :" , response_data)
+
+
 @pytest.mark.run(order=16)
 def test_revise_room_name():
 

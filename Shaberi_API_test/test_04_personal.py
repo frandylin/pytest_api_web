@@ -142,8 +142,9 @@ def test_friend_online_status():
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Assuming the response body is in JSON format
-    assert "presence" in response_data, "Response does not contain 'presence'"
+    assert response_data["presence"] == "online", "Response does not contain 'presence'"
     assert "last_active_ago", "Response does not contain 'last active ago'"
+    assert response_data["currently_active"] == True, "Response does not contain 'currently active'"
 
 @pytest.mark.run(order=26)
 def test_change_introduction():
