@@ -19,7 +19,7 @@ global_random_number = None
 get_environment_url = Enviroment().get_base_url()
 env = Enviroment().env
 
-@pytest.mark.run(order=22)
+@pytest.mark.run(order=29)
 def test_revise_displayname():
 
     # API details
@@ -53,7 +53,7 @@ def test_revise_displayname():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=23)
+@pytest.mark.run(order=30)
 def test_change_avatar():
     image_folder = os.path.join(os.path.dirname(__file__), 'assets')
     image = os.path.join(image_folder, "pepe.jpeg")
@@ -77,7 +77,7 @@ def test_change_avatar():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=24)
+@pytest.mark.run(order=31)
 def test_search_profile():
 
     # API details
@@ -113,7 +113,7 @@ def test_search_profile():
     assert "phone_number" in response_data, "Response does not contain 'phone_number'"
 
 
-@pytest.mark.run(order=25)
+@pytest.mark.run(order=32)
 def test_friend_online_status():
     
     # API details
@@ -146,7 +146,7 @@ def test_friend_online_status():
     assert "last_active_ago", "Response does not contain 'last active ago'"
     assert response_data["currently_active"] == True, "Response does not contain 'currently active'"
 
-@pytest.mark.run(order=26)
+@pytest.mark.run(order=33)
 def test_change_introduction():
 
     global global_random_number
@@ -183,7 +183,7 @@ def test_change_introduction():
     response_data = response.json()
     print("Response Data :" , response_data)
 
-@pytest.mark.run(order=27)
+@pytest.mark.run(order=34)
 def test_search_introduction():
 
     # API details
@@ -213,7 +213,7 @@ def test_search_introduction():
     assert f"API Testing Lets gooooo{global_random_number}" == response_data["introduction"], "introduction was not equal."
 
 
-@pytest.mark.run(order=28)
+@pytest.mark.run(order=35)
 def test_search_joined_room():
 
     # API details
@@ -254,7 +254,7 @@ def test_search_joined_room():
     print("Friend user_id:" , global_friend_user_id)
     
 
-@pytest.mark.run(order=29)
+@pytest.mark.run(order=36)
 def test_revise_friend_mark():
     #透過 joined room 中找到 room id , 再透過 search room member 得到 friend user id
     # API details
@@ -286,7 +286,7 @@ def test_revise_friend_mark():
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
 
-@pytest.mark.run(order=30)
+@pytest.mark.run(order=37)
 def test_search_friend_mark():
     # API details
     get_variable()
@@ -314,7 +314,7 @@ def test_search_friend_mark():
     print("Response Data :" , response_data)
     assert response_data.get("remark_users", {}).get(f"{global_friend_user_id}") == f"Frandy API Test{global_random_number}", "friend mark was not equal."
 
-@pytest.mark.run(order=31)
+@pytest.mark.run(order=38)
 def test_logout():
 
     #API details
