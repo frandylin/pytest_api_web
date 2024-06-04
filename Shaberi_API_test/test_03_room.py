@@ -63,12 +63,12 @@ def test_create_room():
         print("Loading test passed. ")
 
     # Validate the response
+    response_data = response.json()
+    print("Response Data :" , response_data)
     assert diff_time < 5, f"too slow {diff_time}"
     assert response.status_code == 200, f"Unexpected status code: {response.status_code}"
 
     # Assuming the response body is in JSON format
-    response_data = response.json()
-    print("Response Data :" , response_data)
     assert ":shaberi.com" in response_data["room_id"], "Response does not contain 'room_id'"
     #Extract session_id
     global global_room_id
